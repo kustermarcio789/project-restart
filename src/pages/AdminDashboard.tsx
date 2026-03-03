@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
-  LayoutDashboard, Users, Calendar, DollarSign, Settings, LogOut, Plane,
+  LayoutDashboard, Users, Calendar, DollarSign, LogOut, Plane,
   TrendingUp, UserCheck, CreditCard, BarChart3, ChevronRight, Search,
   CheckCircle2, Clock, XCircle, MoreHorizontal
 } from 'lucide-react';
@@ -10,39 +10,44 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
 
 type Tab = 'dashboard' | 'providers' | 'bookings' | 'commissions';
 
-// Mock data
-const mockStats = {
-  totalBookings: 1247,
-  activeProviders: 38,
-  totalRevenue: 892500,
-  monthlyGrowth: 12.5,
-};
+interface DashboardStats {
+  total_bookings: number;
+  active_providers: number;
+  total_revenue: number;
+}
 
-const mockBookings = [
-  { id: 'BK-001', traveler: 'Maria Silva', destination: 'Paris', date: '2026-03-15', amount: 4500, status: 'confirmed' as const },
-  { id: 'BK-002', traveler: 'John Smith', destination: 'Tóquio', date: '2026-03-18', amount: 6200, status: 'pending' as const },
-  { id: 'BK-003', traveler: 'Ana García', destination: 'Cancún', date: '2026-03-20', amount: 3200, status: 'confirmed' as const },
-  { id: 'BK-004', traveler: 'Pedro Santos', destination: 'Roma', date: '2026-03-22', amount: 4100, status: 'cancelled' as const },
-  { id: 'BK-005', traveler: 'Laura Chen', destination: 'Dubai', date: '2026-03-25', amount: 5800, status: 'confirmed' as const },
-];
+interface Booking {
+  id: string;
+  booking_code: string;
+  traveler_name: string;
+  destination: string;
+  travel_date: string | null;
+  amount: number;
+  status: 'confirmed' | 'pending' | 'cancelled';
+}
 
-const mockProviders = [
-  { id: 1, name: 'SkyTravel Voos', type: 'Voos', status: 'active' as const, bookings: 234, revenue: 125000 },
-  { id: 2, name: 'LuxStay Hotéis', type: 'Hotéis', status: 'active' as const, bookings: 189, revenue: 98000 },
-  { id: 3, name: 'DriveAway Rent', type: 'Aluguel', status: 'pending' as const, bookings: 0, revenue: 0 },
-  { id: 4, name: 'SafeTrip Seguros', type: 'Seguros', status: 'active' as const, bookings: 156, revenue: 45000 },
-  { id: 5, name: 'WorldTours', type: 'Tours', status: 'blocked' as const, bookings: 67, revenue: 32000 },
-];
+interface Provider {
+  id: string;
+  name: string;
+  service_type: string;
+  status: 'active' | 'pending' | 'blocked';
+  commission_rate: number;
+  booking_count?: number;
+  total_revenue?: number;
+}
 
-const mockCommissions = [
-  { provider: 'SkyTravel Voos', service: 'Voos', rate: 8, totalBookings: 234, totalCommission: 10000 },
-  { provider: 'LuxStay Hotéis', service: 'Hotéis', rate: 12, totalBookings: 189, totalCommission: 11760 },
-  { provider: 'SafeTrip Seguros', service: 'Seguros', rate: 15, totalBookings: 156, totalCommission: 6750 },
-  { provider: 'WorldTours', service: 'Tours', rate: 10, totalBookings: 67, totalCommission: 3200 },
-];
+interface Commission {
+  id: string;
+  rate: number;
+  amount: number;
+  provider_name: string;
+  service_type: string;
+  booking_code: string;
+}
 
 const statusColors = {
   confirmed: 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20',
@@ -62,34 +67,103 @@ const statusIcons = {
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [tab, setTab] = useState<Tab>('dashboard');
   const [searchQuery, setSearchQuery] = useState('');
+  const [stats, setStats] = useState<DashboardStats>({ total_bookings: 0, active_providers: 0, total_revenue: 0 });
+  const [bookings, setBookings] = useState<Booking[]>([]);
+  const [providers, setProviders] = useState<Provider[]>([]);
+  const [commissions, setCommissions] = useState<Commission[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const validateSession = async () => {
       const token = sessionStorage.getItem('admin_session_token');
-      if (!token) {
-        navigate('/admin');
-        return;
-      }
-      const { data, error } = await supabase.rpc('admin_validate_session', {
-        p_session_token: token,
-      });
+      if (!token) { navigate('/admin'); return; }
+      const { data, error } = await supabase.rpc('admin_validate_session', { p_session_token: token });
       const result = data as unknown as { valid: boolean } | null;
       if (error || !result?.valid) {
         sessionStorage.removeItem('admin_session_token');
         sessionStorage.removeItem('admin_display_name');
         navigate('/admin');
+        return;
       }
+      fetchData();
     };
     validateSession();
   }, [navigate]);
 
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      // Fetch stats
+      const { data: statsData } = await supabase.rpc('get_dashboard_stats');
+      if (statsData) setStats(statsData as unknown as DashboardStats);
+
+      // Fetch bookings
+      const { data: bookingsData } = await supabase
+        .from('bookings')
+        .select('*')
+        .order('created_at', { ascending: false });
+      if (bookingsData) setBookings(bookingsData as unknown as Booking[]);
+
+      // Fetch providers with aggregated data
+      const { data: providersData } = await supabase
+        .from('providers')
+        .select('*')
+        .order('created_at', { ascending: true });
+      
+      if (providersData) {
+        // Get booking counts and revenue per provider
+        const { data: providerStats } = await supabase
+          .from('bookings')
+          .select('provider_id, amount, status');
+        
+        const providerMap = new Map<string, { count: number; revenue: number }>();
+        if (providerStats) {
+          for (const b of providerStats as any[]) {
+            if (!b.provider_id) continue;
+            const existing = providerMap.get(b.provider_id) || { count: 0, revenue: 0 };
+            existing.count++;
+            if (b.status === 'confirmed') existing.revenue += Number(b.amount);
+            providerMap.set(b.provider_id, existing);
+          }
+        }
+
+        setProviders((providersData as unknown as Provider[]).map(p => ({
+          ...p,
+          booking_count: providerMap.get(p.id)?.count || 0,
+          total_revenue: providerMap.get(p.id)?.revenue || 0,
+        })));
+      }
+
+      // Fetch commissions with joins
+      const { data: commissionsData } = await supabase
+        .from('commissions')
+        .select('id, rate, amount, provider_id, booking_id')
+        .order('created_at', { ascending: false });
+      
+      if (commissionsData && providersData && bookingsData) {
+        const provMap = new Map((providersData as any[]).map(p => [p.id, p]));
+        const bookMap = new Map((bookingsData as any[]).map(b => [b.id, b]));
+        setCommissions((commissionsData as any[]).map(c => ({
+          id: c.id,
+          rate: c.rate,
+          amount: c.amount,
+          provider_name: provMap.get(c.provider_id)?.name || 'N/A',
+          service_type: provMap.get(c.provider_id)?.service_type || 'N/A',
+          booking_code: bookMap.get(c.booking_id)?.booking_code || 'N/A',
+        })));
+      }
+    } catch (err: any) {
+      toast({ title: 'Erro ao carregar dados', description: err.message, variant: 'destructive' });
+    }
+    setLoading(false);
+  };
+
   const handleLogout = async () => {
     const token = sessionStorage.getItem('admin_session_token');
-    if (token) {
-      await supabase.rpc('admin_logout', { p_session_token: token });
-    }
+    if (token) await supabase.rpc('admin_logout', { p_session_token: token });
     sessionStorage.removeItem('admin_session_token');
     sessionStorage.removeItem('admin_display_name');
     navigate('/admin');
@@ -101,6 +175,20 @@ const AdminDashboard = () => {
     { id: 'bookings' as const, label: 'Reservas', icon: Calendar },
     { id: 'commissions' as const, label: 'Comissões', icon: DollarSign },
   ];
+
+  // Aggregate commissions by provider for the commissions tab
+  const commissionsByProvider = providers
+    .filter(p => p.status !== 'pending')
+    .map(p => {
+      const provCommissions = commissions.filter(c => c.provider_name === p.name);
+      return {
+        provider: p.name,
+        service: p.service_type,
+        rate: p.commission_rate,
+        totalBookings: p.booking_count || 0,
+        totalCommission: provCommissions.reduce((sum, c) => sum + Number(c.amount), 0),
+      };
+    });
 
   return (
     <div className="min-h-screen bg-background flex">
@@ -161,40 +249,36 @@ const AdminDashboard = () => {
         </div>
 
         <div className="p-6 sm:p-8 max-w-7xl mx-auto">
-          {/* Dashboard Tab */}
-          {tab === 'dashboard' && (
+          {loading && (
+            <div className="flex items-center justify-center py-20">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+            </div>
+          )}
+
+          {!loading && tab === 'dashboard' && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-8">
               <div>
                 <h1 className="text-2xl font-bold mb-1" style={{ fontFamily: "'DM Serif Display', serif" }}>Dashboard</h1>
                 <p className="text-sm text-muted-foreground">Visão geral da plataforma</p>
               </div>
 
-              {/* Metrics */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 {[
-                  { label: 'Total Reservas', value: mockStats.totalBookings.toLocaleString(), icon: Calendar, change: '+18%', color: 'text-primary' },
-                  { label: 'Prestadores Ativos', value: mockStats.activeProviders.toString(), icon: UserCheck, change: '+3', color: 'text-emerald-500' },
-                  { label: 'Receita Total', value: `R$ ${(mockStats.totalRevenue / 1000).toFixed(0)}K`, icon: CreditCard, change: '+12.5%', color: 'text-accent' },
-                  { label: 'Crescimento Mensal', value: `${mockStats.monthlyGrowth}%`, icon: TrendingUp, change: '+2.1%', color: 'text-primary' },
+                  { label: 'Total Reservas', value: stats.total_bookings.toLocaleString(), icon: Calendar, color: 'text-primary' },
+                  { label: 'Prestadores Ativos', value: stats.active_providers.toString(), icon: UserCheck, color: 'text-emerald-500' },
+                  { label: 'Receita Total', value: `R$ ${(stats.total_revenue / 1000).toFixed(0)}K`, icon: CreditCard, color: 'text-accent' },
+                  { label: 'Comissões', value: `R$ ${commissionsByProvider.reduce((s, c) => s + c.totalCommission, 0).toLocaleString()}`, icon: TrendingUp, color: 'text-primary' },
                 ].map((metric, i) => (
-                  <motion.div
-                    key={i}
-                    initial={{ opacity: 0, y: 16 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: i * 0.08 }}
-                    className="glass-card glow-border p-5"
-                  >
+                  <motion.div key={i} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.08 }} className="glass-card glow-border p-5">
                     <div className="flex items-center justify-between mb-3">
                       <span className="text-xs text-muted-foreground uppercase tracking-wide">{metric.label}</span>
                       <metric.icon className={`h-4 w-4 ${metric.color}`} />
                     </div>
                     <div className="text-2xl font-bold" style={{ fontFamily: "'DM Serif Display', serif" }}>{metric.value}</div>
-                    <div className="text-xs text-emerald-500 mt-1">{metric.change}</div>
                   </motion.div>
                 ))}
               </div>
 
-              {/* Recent Bookings */}
               <div className="glass-card glow-border overflow-hidden">
                 <div className="p-5 border-b border-border flex items-center justify-between">
                   <h3 className="font-semibold" style={{ fontFamily: "'DM Serif Display', serif" }}>Reservas Recentes</h3>
@@ -214,14 +298,14 @@ const AdminDashboard = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {mockBookings.slice(0, 5).map(b => {
+                      {bookings.slice(0, 5).map(b => {
                         const StatusIcon = statusIcons[b.status];
                         return (
                           <tr key={b.id} className="border-b border-border/50 hover:bg-muted/30 transition-colors">
-                            <td className="p-4 font-mono text-xs text-muted-foreground">{b.id}</td>
-                            <td className="p-4 font-medium">{b.traveler}</td>
+                            <td className="p-4 font-mono text-xs text-muted-foreground">{b.booking_code}</td>
+                            <td className="p-4 font-medium">{b.traveler_name}</td>
                             <td className="p-4 text-muted-foreground">{b.destination}</td>
-                            <td className="p-4 font-medium text-accent">R$ {b.amount.toLocaleString()}</td>
+                            <td className="p-4 font-medium text-accent">R$ {Number(b.amount).toLocaleString()}</td>
                             <td className="p-4">
                               <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border ${statusColors[b.status]}`}>
                                 <StatusIcon className="h-3 w-3" />
@@ -238,8 +322,7 @@ const AdminDashboard = () => {
             </motion.div>
           )}
 
-          {/* Providers Tab */}
-          {tab === 'providers' && (
+          {!loading && tab === 'providers' && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
               <div className="flex items-center justify-between">
                 <div>
@@ -265,14 +348,14 @@ const AdminDashboard = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {mockProviders.filter(p => p.name.toLowerCase().includes(searchQuery.toLowerCase())).map(p => {
+                    {providers.filter(p => p.name.toLowerCase().includes(searchQuery.toLowerCase())).map(p => {
                       const StatusIcon = statusIcons[p.status];
                       return (
                         <tr key={p.id} className="border-b border-border/50 hover:bg-muted/30 transition-colors">
                           <td className="p-4 font-medium">{p.name}</td>
-                          <td className="p-4 text-muted-foreground">{p.type}</td>
-                          <td className="p-4">{p.bookings}</td>
-                          <td className="p-4 font-medium text-accent">R$ {p.revenue.toLocaleString()}</td>
+                          <td className="p-4 text-muted-foreground">{p.service_type}</td>
+                          <td className="p-4">{p.booking_count || 0}</td>
+                          <td className="p-4 font-medium text-accent">R$ {(p.total_revenue || 0).toLocaleString()}</td>
                           <td className="p-4">
                             <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border ${statusColors[p.status]}`}>
                               <StatusIcon className="h-3 w-3" />
@@ -291,8 +374,7 @@ const AdminDashboard = () => {
             </motion.div>
           )}
 
-          {/* Bookings Tab */}
-          {tab === 'bookings' && (
+          {!loading && tab === 'bookings' && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
               <div className="flex items-center justify-between">
                 <div>
@@ -318,15 +400,15 @@ const AdminDashboard = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {mockBookings.filter(b => b.traveler.toLowerCase().includes(searchQuery.toLowerCase()) || b.destination.toLowerCase().includes(searchQuery.toLowerCase())).map(b => {
+                    {bookings.filter(b => b.traveler_name.toLowerCase().includes(searchQuery.toLowerCase()) || b.destination.toLowerCase().includes(searchQuery.toLowerCase())).map(b => {
                       const StatusIcon = statusIcons[b.status];
                       return (
                         <tr key={b.id} className="border-b border-border/50 hover:bg-muted/30 transition-colors">
-                          <td className="p-4 font-mono text-xs text-muted-foreground">{b.id}</td>
-                          <td className="p-4 font-medium">{b.traveler}</td>
+                          <td className="p-4 font-mono text-xs text-muted-foreground">{b.booking_code}</td>
+                          <td className="p-4 font-medium">{b.traveler_name}</td>
                           <td className="p-4 text-muted-foreground">{b.destination}</td>
-                          <td className="p-4 text-muted-foreground">{b.date}</td>
-                          <td className="p-4 font-medium text-accent">R$ {b.amount.toLocaleString()}</td>
+                          <td className="p-4 text-muted-foreground">{b.travel_date}</td>
+                          <td className="p-4 font-medium text-accent">R$ {Number(b.amount).toLocaleString()}</td>
                           <td className="p-4">
                             <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border ${statusColors[b.status]}`}>
                               <StatusIcon className="h-3 w-3" />
@@ -342,8 +424,7 @@ const AdminDashboard = () => {
             </motion.div>
           )}
 
-          {/* Commissions Tab */}
-          {tab === 'commissions' && (
+          {!loading && tab === 'commissions' && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
               <div>
                 <h1 className="text-2xl font-bold" style={{ fontFamily: "'DM Serif Display', serif" }}>Comissões</h1>
@@ -352,9 +433,9 @@ const AdminDashboard = () => {
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
                 {[
-                  { label: 'Total Comissões', value: `R$ ${mockCommissions.reduce((a, c) => a + c.totalCommission, 0).toLocaleString()}`, icon: DollarSign },
-                  { label: 'Taxa Média', value: `${(mockCommissions.reduce((a, c) => a + c.rate, 0) / mockCommissions.length).toFixed(1)}%`, icon: BarChart3 },
-                  { label: 'Prestadores', value: mockCommissions.length.toString(), icon: Users },
+                  { label: 'Total Comissões', value: `R$ ${commissionsByProvider.reduce((a, c) => a + c.totalCommission, 0).toLocaleString()}`, icon: DollarSign },
+                  { label: 'Taxa Média', value: `${commissionsByProvider.length ? (commissionsByProvider.reduce((a, c) => a + c.rate, 0) / commissionsByProvider.length).toFixed(1) : 0}%`, icon: BarChart3 },
+                  { label: 'Prestadores', value: commissionsByProvider.length.toString(), icon: Users },
                 ].map((m, i) => (
                   <div key={i} className="glass-card glow-border p-5">
                     <div className="flex items-center justify-between mb-2">
@@ -378,7 +459,7 @@ const AdminDashboard = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {mockCommissions.map((c, i) => (
+                    {commissionsByProvider.map((c, i) => (
                       <tr key={i} className="border-b border-border/50 hover:bg-muted/30 transition-colors">
                         <td className="p-4 font-medium">{c.provider}</td>
                         <td className="p-4 text-muted-foreground">{c.service}</td>

@@ -70,6 +70,128 @@ export type Database = {
         }
         Relationships: []
       }
+      bookings: {
+        Row: {
+          amount: number
+          booking_code: string
+          created_at: string
+          destination: string
+          id: string
+          provider_id: string | null
+          status: string
+          travel_date: string | null
+          traveler_email: string | null
+          traveler_name: string
+          updated_at: string
+        }
+        Insert: {
+          amount?: number
+          booking_code: string
+          created_at?: string
+          destination: string
+          id?: string
+          provider_id?: string | null
+          status?: string
+          travel_date?: string | null
+          traveler_email?: string | null
+          traveler_name: string
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          booking_code?: string
+          created_at?: string
+          destination?: string
+          id?: string
+          provider_id?: string | null
+          status?: string
+          travel_date?: string | null
+          traveler_email?: string | null
+          traveler_name?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bookings_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: false
+            referencedRelation: "providers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      commissions: {
+        Row: {
+          amount: number
+          booking_id: string
+          created_at: string
+          id: string
+          provider_id: string
+          rate: number
+        }
+        Insert: {
+          amount: number
+          booking_id: string
+          created_at?: string
+          id?: string
+          provider_id: string
+          rate: number
+        }
+        Update: {
+          amount?: number
+          booking_id?: string
+          created_at?: string
+          id?: string
+          provider_id?: string
+          rate?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "commissions_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "commissions_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: false
+            referencedRelation: "providers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      providers: {
+        Row: {
+          commission_rate: number
+          created_at: string
+          id: string
+          name: string
+          service_type: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          commission_rate?: number
+          created_at?: string
+          id?: string
+          name: string
+          service_type: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          commission_rate?: number
+          created_at?: string
+          id?: string
+          name?: string
+          service_type?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -80,10 +202,20 @@ export type Database = {
         Returns: Json
       }
       admin_logout: { Args: { p_session_token: string }; Returns: undefined }
+      admin_update_provider_status: {
+        Args: {
+          p_provider_id: string
+          p_session_token: string
+          p_status: string
+        }
+        Returns: Json
+      }
       admin_validate_session: {
         Args: { p_session_token: string }
         Returns: Json
       }
+      get_dashboard_stats: { Args: never; Returns: Json }
+      is_admin_session: { Args: never; Returns: boolean }
     }
     Enums: {
       [_ in never]: never
