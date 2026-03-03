@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Star } from 'lucide-react';
+import { Star, Quote } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 const testimonials = [
@@ -12,15 +12,20 @@ export const TestimonialsSection = () => {
   const { t } = useLanguage();
 
   return (
-    <section className="py-20 sm:py-28">
+    <section className="py-24 sm:py-32 relative">
+      <div className="horizon-line absolute top-0 left-0 right-0" />
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-center mb-16"
+          transition={{ duration: 0.6 }}
+          className="text-center mb-20"
         >
-          <h2 className="text-3xl sm:text-4xl font-bold mb-4">{t('test.title')}</h2>
+          <h2 className="text-3xl sm:text-5xl font-bold mb-5" style={{ fontFamily: "'DM Serif Display', serif" }}>
+            {t('test.title')}
+          </h2>
           <p className="text-muted-foreground text-lg">{t('test.subtitle')}</p>
         </motion.div>
 
@@ -28,20 +33,31 @@ export const TestimonialsSection = () => {
           {testimonials.map((item, i) => (
             <motion.div
               key={i}
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 24 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: i * 0.15 }}
-              className="glass-card p-6"
+              transition={{ delay: i * 0.12, duration: 0.5 }}
+              className="glass-card glow-border p-7 relative"
             >
-              <div className="flex gap-1 mb-4">
+              <Quote className="absolute top-5 right-5 h-8 w-8 text-primary/10" />
+
+              <div className="flex gap-0.5 mb-5">
                 {Array.from({ length: item.rating }).map((_, j) => (
-                  <Star key={j} className="h-4 w-4 fill-primary text-primary" />
+                  <Star key={j} className="h-4 w-4 fill-accent text-accent" />
                 ))}
               </div>
-              <p className="text-sm text-muted-foreground mb-6 leading-relaxed">"{item.text}"</p>
+
+              <p className="text-sm text-muted-foreground mb-7 leading-relaxed italic">
+                "{item.text}"
+              </p>
+
               <div className="flex items-center gap-3">
-                <img src={item.avatar} alt={item.name} className="w-10 h-10 rounded-full object-cover" loading="lazy" />
+                <img
+                  src={item.avatar}
+                  alt={item.name}
+                  className="w-11 h-11 rounded-full object-cover ring-2 ring-primary/20"
+                  loading="lazy"
+                />
                 <div>
                   <div className="text-sm font-semibold">{item.name}</div>
                   <div className="text-xs text-muted-foreground">{item.location}</div>

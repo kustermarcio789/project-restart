@@ -1,14 +1,18 @@
 import { motion } from 'framer-motion';
-import { ArrowRight, Play } from 'lucide-react';
+import { ArrowRight, Play, Sparkles } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Button } from '@/components/ui/button';
 
-export const HeroSection = ({ onStartFlow }: { onStartFlow?: () => void }) => {
+interface HeroSectionProps {
+  onStartFlow?: () => void;
+}
+
+export const HeroSection = ({ onStartFlow }: HeroSectionProps) => {
   const { t } = useLanguage();
 
   return (
-    <section id="hero" className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Background */}
+    <section id="hero" className="relative min-h-[100vh] flex items-center justify-center overflow-hidden">
+      {/* Cinematic Background */}
       <div className="absolute inset-0">
         <div
           className="ken-burns absolute inset-0 bg-cover bg-center"
@@ -16,39 +20,66 @@ export const HeroSection = ({ onStartFlow }: { onStartFlow?: () => void }) => {
             backgroundImage: `url('https://images.unsplash.com/photo-1488085061387-422e29b40080?w=1920&q=80')`,
           }}
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-background/80 via-background/60 to-background" />
+        <div className="cinematic-overlay absolute inset-0" />
+      </div>
+
+      {/* Floating Particles */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        {[...Array(5)].map((_, i) => (
+          <div
+            key={i}
+            className="float-particle absolute w-1 h-1 rounded-full bg-primary/40"
+            style={{
+              left: `${15 + i * 18}%`,
+              top: `${20 + (i % 3) * 25}%`,
+              animationDelay: `${i * 1.5}s`,
+            }}
+          />
+        ))}
       </div>
 
       {/* Content */}
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center pt-20">
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center pt-20 pb-12">
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
+          transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
         >
           <motion.div
-            initial={{ scale: 0.9 }}
-            animate={{ scale: 1 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="inline-block mb-6 px-4 py-1.5 rounded-full glass-panel text-sm font-medium text-primary"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+            className="inline-flex items-center gap-2 mb-8 px-4 py-2 rounded-full glass-panel glow-border text-sm font-medium text-primary"
           >
-            ✈️ {t('stats.destinations')}: 120+
+            <Sparkles className="h-3.5 w-3.5" />
+            <span>{t('stats.destinations')}: 120+</span>
           </motion.div>
 
-          <h1 className="text-4xl sm:text-6xl lg:text-7xl font-bold leading-tight mb-6">
-            {t('hero.title')}{' '}
+          <h1 className="text-5xl sm:text-7xl lg:text-8xl font-bold leading-[0.95] mb-8 text-shadow-cinematic" style={{ fontFamily: "'DM Serif Display', serif" }}>
+            {t('hero.title')}
+            <br />
             <span className="gradient-text">{t('hero.titleHighlight')}</span>
           </h1>
 
-          <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto mb-10">
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.5 }}
+            className="text-lg sm:text-xl text-muted-foreground max-w-xl mx-auto mb-12 leading-relaxed"
+          >
             {t('hero.subtitle')}
-          </p>
+          </motion.p>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.7 }}
+            className="flex flex-col sm:flex-row items-center justify-center gap-4"
+          >
             <Button
               size="lg"
-              className="gradient-btn rounded-full px-8 h-12 text-base border-0"
-              onClick={onStartFlow || (() => document.querySelector('#services')?.scrollIntoView({ behavior: 'smooth' }))}
+              className="gradient-btn rounded-full px-10 h-14 text-base border-0 tracking-wide"
+              onClick={onStartFlow}
             >
               {t('hero.cta')}
               <ArrowRight className="ml-2 h-5 w-5" />
@@ -56,33 +87,39 @@ export const HeroSection = ({ onStartFlow }: { onStartFlow?: () => void }) => {
             <Button
               variant="outline"
               size="lg"
-              className="rounded-full px-8 h-12 text-base glass-panel border-border hover:bg-muted/50"
+              className="rounded-full px-8 h-14 text-base glass-panel border-border/50 hover:bg-muted/30 hover:border-primary/30 transition-all duration-300"
               onClick={() => document.querySelector('#destinations')?.scrollIntoView({ behavior: 'smooth' })}
             >
               <Play className="mr-2 h-4 w-4" />
               {t('hero.ctaSecondary')}
             </Button>
-          </div>
+          </motion.div>
         </motion.div>
 
-        {/* Stats Bar */}
+        {/* Stats */}
         <motion.div
-          initial={{ opacity: 0, y: 40 }}
+          initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.5 }}
-          className="mt-16 sm:mt-20 glass-panel rounded-2xl p-6 sm:p-8 max-w-4xl mx-auto"
+          transition={{ duration: 0.8, delay: 0.9, ease: [0.22, 1, 0.36, 1] }}
+          className="mt-20 sm:mt-28 glass-panel glow-border rounded-2xl p-8 sm:p-10 max-w-3xl mx-auto"
         >
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-8">
             {[
               { value: '50K+', label: t('stats.travelers') },
               { value: '120+', label: t('stats.destinations') },
               { value: '24/7', label: t('stats.support') },
               { value: '4.9', label: t('stats.rating') },
             ].map((stat, i) => (
-              <div key={i} className="text-center">
-                <div className="text-2xl sm:text-3xl font-bold gradient-text">{stat.value}</div>
-                <div className="text-xs sm:text-sm text-muted-foreground mt-1">{stat.label}</div>
-              </div>
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 1.1 + i * 0.1 }}
+                className="text-center"
+              >
+                <div className="text-2xl sm:text-3xl font-bold gradient-text" style={{ fontFamily: "'DM Serif Display', serif" }}>{stat.value}</div>
+                <div className="text-xs text-muted-foreground mt-1.5 tracking-wide uppercase">{stat.label}</div>
+              </motion.div>
             ))}
           </div>
         </motion.div>
