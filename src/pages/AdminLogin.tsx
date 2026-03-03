@@ -6,9 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-
-const ADMIN_EMAIL = 'admin@decolando.com';
-const ADMIN_PASSWORD = 'admin123';
+import { supabase } from '@/integrations/supabase/client';
 
 const AdminLogin = () => {
   const navigate = useNavigate();
@@ -22,15 +20,36 @@ const AdminLogin = () => {
     e.preventDefault();
     setLoading(true);
 
-    await new Promise(r => setTimeout(r, 800));
+    try {
+      const { data, error } = await supabase.rpc('admin_login', {
+        p_username: email,
+        p_password: password,
+      });
 
-    if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
-      sessionStorage.setItem('admin_auth', 'true');
-      toast({ title: 'Login realizado com sucesso!' });
-      navigate('/admin/dashboard');
-    } else {
-      toast({ title: 'Credenciais inválidas', description: 'E-mail ou senha incorretos.', variant: 'destructive' });
+      if (error) throw error;
+
+      const result = data as unknown as { success: boolean; session_token?: string; display_name?: string; error?: string };
+
+      if (result?.success) {
+        sessionStorage.setItem('admin_session_token', result.session_token!);
+        sessionStorage.setItem('admin_display_name', result.display_name || 'Admin');
+        toast({ title: 'Login realizado com sucesso!' });
+        navigate('/admin/dashboard');
+      } else {
+        toast({
+          title: 'Credenciais inválidas',
+          description: result?.error || 'E-mail ou senha incorretos.',
+          variant: 'destructive',
+        });
+      }
+    } catch (err: any) {
+      toast({
+        title: 'Erro ao fazer login',
+        description: err.message || 'Tente novamente.',
+        variant: 'destructive',
+      });
     }
+
     setLoading(false);
   };
 
