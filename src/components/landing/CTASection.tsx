@@ -3,7 +3,7 @@ import { ArrowRight } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Button } from '@/components/ui/button';
 
-export const CTASection = () => {
+export const CTASection = ({ onStartFlow }: { onStartFlow?: () => void }) => {
   const { t } = useLanguage();
 
   return (
@@ -30,6 +30,7 @@ export const CTASection = () => {
             <Button
               size="lg"
               className="rounded-full px-8 h-12 text-base bg-white text-foreground hover:bg-white/90 font-semibold border-0"
+              onClick={onStartFlow}
             >
               {t('cta.button')}
               <ArrowRight className="ml-2 h-5 w-5" />

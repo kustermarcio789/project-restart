@@ -3,7 +3,7 @@ import { ArrowRight, Play } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Button } from '@/components/ui/button';
 
-export const HeroSection = () => {
+export const HeroSection = ({ onStartFlow }: { onStartFlow?: () => void }) => {
   const { t } = useLanguage();
 
   return (
@@ -48,7 +48,7 @@ export const HeroSection = () => {
             <Button
               size="lg"
               className="gradient-btn rounded-full px-8 h-12 text-base border-0"
-              onClick={() => document.querySelector('#services')?.scrollIntoView({ behavior: 'smooth' })}
+              onClick={onStartFlow || (() => document.querySelector('#services')?.scrollIntoView({ behavior: 'smooth' }))}
             >
               {t('hero.cta')}
               <ArrowRight className="ml-2 h-5 w-5" />
