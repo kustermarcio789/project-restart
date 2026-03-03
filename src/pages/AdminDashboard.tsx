@@ -9,6 +9,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
+import { supabase } from '@/integrations/supabase/client';
 
 type Tab = 'dashboard' | 'providers' | 'bookings' | 'commissions';
 
@@ -65,13 +66,32 @@ const AdminDashboard = () => {
   const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
-    if (sessionStorage.getItem('admin_auth') !== 'true') {
-      navigate('/admin');
-    }
+    const validateSession = async () => {
+      const token = sessionStorage.getItem('admin_session_token');
+      if (!token) {
+        navigate('/admin');
+        return;
+      }
+      const { data, error } = await supabase.rpc('admin_validate_session', {
+        p_session_token: token,
+      });
+      const result = data as unknown as { valid: boolean } | null;
+      if (error || !result?.valid) {
+        sessionStorage.removeItem('admin_session_token');
+        sessionStorage.removeItem('admin_display_name');
+        navigate('/admin');
+      }
+    };
+    validateSession();
   }, [navigate]);
 
-  const handleLogout = () => {
-    sessionStorage.removeItem('admin_auth');
+  const handleLogout = async () => {
+    const token = sessionStorage.getItem('admin_session_token');
+    if (token) {
+      await supabase.rpc('admin_logout', { p_session_token: token });
+    }
+    sessionStorage.removeItem('admin_session_token');
+    sessionStorage.removeItem('admin_display_name');
     navigate('/admin');
   };
 
