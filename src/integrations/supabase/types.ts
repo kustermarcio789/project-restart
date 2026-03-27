@@ -70,6 +70,105 @@ export type Database = {
         }
         Relationships: []
       }
+      audit_logs: {
+        Row: {
+          action: string
+          actor_id: string | null
+          actor_type: string
+          created_at: string
+          id: string
+          ip_address: string | null
+          new_data: Json | null
+          old_data: Json | null
+          resource_id: string | null
+          resource_type: string
+        }
+        Insert: {
+          action: string
+          actor_id?: string | null
+          actor_type?: string
+          created_at?: string
+          id?: string
+          ip_address?: string | null
+          new_data?: Json | null
+          old_data?: Json | null
+          resource_id?: string | null
+          resource_type: string
+        }
+        Update: {
+          action?: string
+          actor_id?: string | null
+          actor_type?: string
+          created_at?: string
+          id?: string
+          ip_address?: string | null
+          new_data?: Json | null
+          old_data?: Json | null
+          resource_id?: string | null
+          resource_type?: string
+        }
+        Relationships: []
+      }
+      blog_posts: {
+        Row: {
+          author_name: string | null
+          category: string | null
+          content: string | null
+          cover_image: string | null
+          created_at: string
+          destination_slug: string | null
+          excerpt: string | null
+          id: string
+          published_at: string | null
+          seo_description: string | null
+          seo_title: string | null
+          service_slug: string | null
+          slug: string
+          status: string
+          tags: Json | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          author_name?: string | null
+          category?: string | null
+          content?: string | null
+          cover_image?: string | null
+          created_at?: string
+          destination_slug?: string | null
+          excerpt?: string | null
+          id?: string
+          published_at?: string | null
+          seo_description?: string | null
+          seo_title?: string | null
+          service_slug?: string | null
+          slug: string
+          status?: string
+          tags?: Json | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          author_name?: string | null
+          category?: string | null
+          content?: string | null
+          cover_image?: string | null
+          created_at?: string
+          destination_slug?: string | null
+          excerpt?: string | null
+          id?: string
+          published_at?: string | null
+          seo_description?: string | null
+          seo_title?: string | null
+          service_slug?: string | null
+          slug?: string
+          status?: string
+          tags?: Json | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       bookings: {
         Row: {
           amount: number
@@ -162,6 +261,467 @@ export type Database = {
           },
         ]
       }
+      content_pages: {
+        Row: {
+          content: string | null
+          created_at: string
+          id: string
+          seo_description: string | null
+          seo_title: string | null
+          slug: string
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          content?: string | null
+          created_at?: string
+          id?: string
+          seo_description?: string | null
+          seo_title?: string | null
+          slug: string
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          content?: string | null
+          created_at?: string
+          id?: string
+          seo_description?: string | null
+          seo_title?: string | null
+          slug?: string
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      cost_simulator_presets: {
+        Row: {
+          avg_cost_brl: number
+          avg_cost_eur: number | null
+          avg_cost_usd: number | null
+          category: string
+          created_at: string
+          destination_slug: string
+          id: string
+          item_name: string
+          notes: string | null
+        }
+        Insert: {
+          avg_cost_brl?: number
+          avg_cost_eur?: number | null
+          avg_cost_usd?: number | null
+          category: string
+          created_at?: string
+          destination_slug: string
+          id?: string
+          item_name: string
+          notes?: string | null
+        }
+        Update: {
+          avg_cost_brl?: number
+          avg_cost_eur?: number | null
+          avg_cost_usd?: number | null
+          category?: string
+          created_at?: string
+          destination_slug?: string
+          id?: string
+          item_name?: string
+          notes?: string | null
+        }
+        Relationships: []
+      }
+      destinations: {
+        Row: {
+          avg_flight_price: number | null
+          avg_hotel_price: number | null
+          avg_insurance_price: number | null
+          climate: Json | null
+          common_scams: Json | null
+          continent: string
+          cost_of_living_index: number | null
+          country: string
+          created_at: string
+          currency: string | null
+          description: string | null
+          documents_required: Json | null
+          faq: Json | null
+          healthcare_info: string | null
+          hero_image: string | null
+          id: string
+          internet_info: string | null
+          is_featured: boolean | null
+          language: string | null
+          name: string
+          neighborhoods: Json | null
+          safety_index: number | null
+          seo_description: string | null
+          seo_title: string | null
+          slug: string
+          status: string
+          timezone: string | null
+          transport_info: string | null
+          updated_at: string
+          visa_info: Json | null
+          visa_required: boolean | null
+        }
+        Insert: {
+          avg_flight_price?: number | null
+          avg_hotel_price?: number | null
+          avg_insurance_price?: number | null
+          climate?: Json | null
+          common_scams?: Json | null
+          continent?: string
+          cost_of_living_index?: number | null
+          country: string
+          created_at?: string
+          currency?: string | null
+          description?: string | null
+          documents_required?: Json | null
+          faq?: Json | null
+          healthcare_info?: string | null
+          hero_image?: string | null
+          id?: string
+          internet_info?: string | null
+          is_featured?: boolean | null
+          language?: string | null
+          name: string
+          neighborhoods?: Json | null
+          safety_index?: number | null
+          seo_description?: string | null
+          seo_title?: string | null
+          slug: string
+          status?: string
+          timezone?: string | null
+          transport_info?: string | null
+          updated_at?: string
+          visa_info?: Json | null
+          visa_required?: boolean | null
+        }
+        Update: {
+          avg_flight_price?: number | null
+          avg_hotel_price?: number | null
+          avg_insurance_price?: number | null
+          climate?: Json | null
+          common_scams?: Json | null
+          continent?: string
+          cost_of_living_index?: number | null
+          country?: string
+          created_at?: string
+          currency?: string | null
+          description?: string | null
+          documents_required?: Json | null
+          faq?: Json | null
+          healthcare_info?: string | null
+          hero_image?: string | null
+          id?: string
+          internet_info?: string | null
+          is_featured?: boolean | null
+          language?: string | null
+          name?: string
+          neighborhoods?: Json | null
+          safety_index?: number | null
+          seo_description?: string | null
+          seo_title?: string | null
+          slug?: string
+          status?: string
+          timezone?: string | null
+          transport_info?: string | null
+          updated_at?: string
+          visa_info?: Json | null
+          visa_required?: boolean | null
+        }
+        Relationships: []
+      }
+      favorites: {
+        Row: {
+          created_at: string
+          destination_slug: string | null
+          id: string
+          service_slug: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          destination_slug?: string | null
+          id?: string
+          service_slug?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          destination_slug?: string | null
+          id?: string
+          service_slug?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      lead_events: {
+        Row: {
+          channel: string | null
+          created_at: string
+          created_by: string | null
+          description: string | null
+          event_type: string
+          id: string
+          lead_id: string
+          metadata: Json | null
+        }
+        Insert: {
+          channel?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          event_type: string
+          id?: string
+          lead_id: string
+          metadata?: Json | null
+        }
+        Update: {
+          channel?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          event_type?: string
+          id?: string
+          lead_id?: string
+          metadata?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lead_events_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      leads: {
+        Row: {
+          assigned_to: string | null
+          budget_range: string | null
+          created_at: string
+          destination_slug: string | null
+          email: string | null
+          id: string
+          landing_page: string | null
+          last_interaction_at: string | null
+          lost_reason: string | null
+          message: string | null
+          name: string
+          next_followup_at: string | null
+          notes: string | null
+          phone: string | null
+          referrer: string | null
+          score: number | null
+          service_type: string | null
+          source: string | null
+          stage: string
+          temperature: string | null
+          travel_date_from: string | null
+          travel_date_to: string | null
+          travelers_count: number | null
+          updated_at: string
+          utm_campaign: string | null
+          utm_content: string | null
+          utm_medium: string | null
+          utm_source: string | null
+          utm_term: string | null
+        }
+        Insert: {
+          assigned_to?: string | null
+          budget_range?: string | null
+          created_at?: string
+          destination_slug?: string | null
+          email?: string | null
+          id?: string
+          landing_page?: string | null
+          last_interaction_at?: string | null
+          lost_reason?: string | null
+          message?: string | null
+          name: string
+          next_followup_at?: string | null
+          notes?: string | null
+          phone?: string | null
+          referrer?: string | null
+          score?: number | null
+          service_type?: string | null
+          source?: string | null
+          stage?: string
+          temperature?: string | null
+          travel_date_from?: string | null
+          travel_date_to?: string | null
+          travelers_count?: number | null
+          updated_at?: string
+          utm_campaign?: string | null
+          utm_content?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          utm_term?: string | null
+        }
+        Update: {
+          assigned_to?: string | null
+          budget_range?: string | null
+          created_at?: string
+          destination_slug?: string | null
+          email?: string | null
+          id?: string
+          landing_page?: string | null
+          last_interaction_at?: string | null
+          lost_reason?: string | null
+          message?: string | null
+          name?: string
+          next_followup_at?: string | null
+          notes?: string | null
+          phone?: string | null
+          referrer?: string | null
+          score?: number | null
+          service_type?: string | null
+          source?: string | null
+          stage?: string
+          temperature?: string | null
+          travel_date_from?: string | null
+          travel_date_to?: string | null
+          travelers_count?: number | null
+          updated_at?: string
+          utm_campaign?: string | null
+          utm_content?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          utm_term?: string | null
+        }
+        Relationships: []
+      }
+      notifications: {
+        Row: {
+          admin_id: string | null
+          created_at: string
+          id: string
+          is_read: boolean | null
+          message: string | null
+          metadata: Json | null
+          title: string
+          type: string
+          user_id: string | null
+        }
+        Insert: {
+          admin_id?: string | null
+          created_at?: string
+          id?: string
+          is_read?: boolean | null
+          message?: string | null
+          metadata?: Json | null
+          title: string
+          type?: string
+          user_id?: string | null
+        }
+        Update: {
+          admin_id?: string | null
+          created_at?: string
+          id?: string
+          is_read?: boolean | null
+          message?: string | null
+          metadata?: Json | null
+          title?: string
+          type?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notifications_admin_id_fkey"
+            columns: ["admin_id"]
+            isOneToOne: false
+            referencedRelation: "admins"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      provider_reviews: {
+        Row: {
+          comment: string | null
+          created_at: string
+          destination: string | null
+          id: string
+          is_approved: boolean | null
+          provider_id: string
+          rating: number
+          reviewer_email: string | null
+          reviewer_name: string
+        }
+        Insert: {
+          comment?: string | null
+          created_at?: string
+          destination?: string | null
+          id?: string
+          is_approved?: boolean | null
+          provider_id: string
+          rating?: number
+          reviewer_email?: string | null
+          reviewer_name: string
+        }
+        Update: {
+          comment?: string | null
+          created_at?: string
+          destination?: string | null
+          id?: string
+          is_approved?: boolean | null
+          provider_id?: string
+          rating?: number
+          reviewer_email?: string | null
+          reviewer_name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "provider_reviews_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: false
+            referencedRelation: "providers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      provider_services: {
+        Row: {
+          created_at: string
+          destination_slug: string | null
+          id: string
+          is_active: boolean | null
+          price_range: string | null
+          provider_id: string
+          service_slug: string
+        }
+        Insert: {
+          created_at?: string
+          destination_slug?: string | null
+          id?: string
+          is_active?: boolean | null
+          price_range?: string | null
+          provider_id: string
+          service_slug: string
+        }
+        Update: {
+          created_at?: string
+          destination_slug?: string | null
+          id?: string
+          is_active?: boolean | null
+          price_range?: string | null
+          provider_id?: string
+          service_slug?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "provider_services_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: false
+            referencedRelation: "providers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       providers: {
         Row: {
           commission_rate: number
@@ -192,16 +752,335 @@ export type Database = {
         }
         Relationships: []
       }
+      quote_items: {
+        Row: {
+          created_at: string
+          description: string
+          id: string
+          notes: string | null
+          quantity: number | null
+          quote_id: string
+          service_type: string
+          total_price: number
+          unit_price: number
+        }
+        Insert: {
+          created_at?: string
+          description: string
+          id?: string
+          notes?: string | null
+          quantity?: number | null
+          quote_id: string
+          service_type: string
+          total_price?: number
+          unit_price?: number
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          id?: string
+          notes?: string | null
+          quantity?: number | null
+          quote_id?: string
+          service_type?: string
+          total_price?: number
+          unit_price?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quote_items_quote_id_fkey"
+            columns: ["quote_id"]
+            isOneToOne: false
+            referencedRelation: "quotes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      quotes: {
+        Row: {
+          created_at: string
+          currency: string
+          id: string
+          lead_id: string
+          notes: string | null
+          provider_id: string | null
+          status: string
+          total_amount: number
+          updated_at: string
+          valid_until: string | null
+        }
+        Insert: {
+          created_at?: string
+          currency?: string
+          id?: string
+          lead_id: string
+          notes?: string | null
+          provider_id?: string | null
+          status?: string
+          total_amount?: number
+          updated_at?: string
+          valid_until?: string | null
+        }
+        Update: {
+          created_at?: string
+          currency?: string
+          id?: string
+          lead_id?: string
+          notes?: string | null
+          provider_id?: string | null
+          status?: string
+          total_amount?: number
+          updated_at?: string
+          valid_until?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quotes_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "quotes_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: false
+            referencedRelation: "providers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      rate_limits: {
+        Row: {
+          attempts: number | null
+          blocked_until: string | null
+          first_attempt_at: string | null
+          key: string
+        }
+        Insert: {
+          attempts?: number | null
+          blocked_until?: string | null
+          first_attempt_at?: string | null
+          key: string
+        }
+        Update: {
+          attempts?: number | null
+          blocked_until?: string | null
+          first_attempt_at?: string | null
+          key?: string
+        }
+        Relationships: []
+      }
+      services: {
+        Row: {
+          created_at: string
+          description: string | null
+          display_order: number | null
+          faq: Json | null
+          features: Json | null
+          hero_image: string | null
+          how_it_works: Json | null
+          icon: string | null
+          id: string
+          name: string
+          seo_description: string | null
+          seo_title: string | null
+          slug: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          display_order?: number | null
+          faq?: Json | null
+          features?: Json | null
+          hero_image?: string | null
+          how_it_works?: Json | null
+          icon?: string | null
+          id?: string
+          name: string
+          seo_description?: string | null
+          seo_title?: string | null
+          slug: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          display_order?: number | null
+          faq?: Json | null
+          features?: Json | null
+          hero_image?: string | null
+          how_it_works?: Json | null
+          icon?: string | null
+          id?: string
+          name?: string
+          seo_description?: string | null
+          seo_title?: string | null
+          slug?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      support_tickets: {
+        Row: {
+          created_at: string
+          id: string
+          lead_id: string | null
+          messages: Json | null
+          priority: string | null
+          status: string
+          subject: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          lead_id?: string | null
+          messages?: Json | null
+          priority?: string | null
+          status?: string
+          subject: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          lead_id?: string | null
+          messages?: Json | null
+          priority?: string | null
+          status?: string
+          subject?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "support_tickets_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      testimonials: {
+        Row: {
+          avatar_url: string | null
+          comment: string
+          created_at: string
+          destination: string | null
+          id: string
+          is_approved: boolean | null
+          is_featured: boolean | null
+          name: string
+          rating: number
+        }
+        Insert: {
+          avatar_url?: string | null
+          comment: string
+          created_at?: string
+          destination?: string | null
+          id?: string
+          is_approved?: boolean | null
+          is_featured?: boolean | null
+          name: string
+          rating?: number
+        }
+        Update: {
+          avatar_url?: string | null
+          comment?: string
+          created_at?: string
+          destination?: string | null
+          id?: string
+          is_approved?: boolean | null
+          is_featured?: boolean | null
+          name?: string
+          rating?: number
+        }
+        Relationships: []
+      }
+      user_profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          full_name: string | null
+          id: string
+          nationality: string | null
+          passport_country: string | null
+          phone: string | null
+          preferred_destinations: Json | null
+          preferred_language: string | null
+          updated_at: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          full_name?: string | null
+          id: string
+          nationality?: string | null
+          passport_country?: string | null
+          phone?: string | null
+          preferred_destinations?: Json | null
+          preferred_language?: string | null
+          updated_at?: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          full_name?: string | null
+          id?: string
+          nationality?: string | null
+          passport_country?: string | null
+          phone?: string | null
+          preferred_destinations?: Json | null
+          preferred_language?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
+      admin_get_audit_logs: {
+        Args: { p_limit?: number; p_offset?: number; p_session_token: string }
+        Returns: Json
+      }
+      admin_get_lead_events: {
+        Args: { p_lead_id: string; p_session_token: string }
+        Returns: Json
+      }
+      admin_get_leads: {
+        Args: {
+          p_destination?: string
+          p_limit?: number
+          p_offset?: number
+          p_session_token: string
+          p_source?: string
+          p_stage?: string
+        }
+        Returns: Json
+      }
+      admin_get_pipeline_stats: {
+        Args: { p_session_token: string }
+        Returns: Json
+      }
       admin_login: {
         Args: { p_password: string; p_username: string }
         Returns: Json
       }
       admin_logout: { Args: { p_session_token: string }; Returns: undefined }
+      admin_update_lead: {
+        Args: { p_data: Json; p_lead_id: string; p_session_token: string }
+        Returns: Json
+      }
       admin_update_provider_status: {
         Args: {
           p_provider_id: string
