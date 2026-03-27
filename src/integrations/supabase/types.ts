@@ -1049,11 +1049,38 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      admin_get_audit_logs: {
+        Args: { p_limit?: number; p_offset?: number; p_session_token: string }
+        Returns: Json
+      }
+      admin_get_lead_events: {
+        Args: { p_lead_id: string; p_session_token: string }
+        Returns: Json
+      }
+      admin_get_leads: {
+        Args: {
+          p_destination?: string
+          p_limit?: number
+          p_offset?: number
+          p_session_token: string
+          p_source?: string
+          p_stage?: string
+        }
+        Returns: Json
+      }
+      admin_get_pipeline_stats: {
+        Args: { p_session_token: string }
+        Returns: Json
+      }
       admin_login: {
         Args: { p_password: string; p_username: string }
         Returns: Json
       }
       admin_logout: { Args: { p_session_token: string }; Returns: undefined }
+      admin_update_lead: {
+        Args: { p_data: Json; p_lead_id: string; p_session_token: string }
+        Returns: Json
+      }
       admin_update_provider_status: {
         Args: {
           p_provider_id: string
