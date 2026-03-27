@@ -9,6 +9,9 @@ import { CTASection } from '@/components/landing/CTASection';
 import { Footer } from '@/components/landing/Footer';
 import { TravelerFlow } from '@/components/TravelerFlow';
 import { RegistrationForm } from '@/components/RegistrationForm';
+import { StickyWhatsApp } from '@/components/shared/StickyWhatsApp';
+import { SEOHead } from '@/components/shared/SEOHead';
+import { JsonLd, buildOrganizationSchema } from '@/components/shared/JsonLd';
 import { Button } from '@/components/ui/button';
 import { UserPlus, Handshake } from 'lucide-react';
 
