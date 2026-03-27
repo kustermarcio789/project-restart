@@ -67,7 +67,7 @@ const DestinationPage = () => {
         ogImage={destination.hero_image || undefined}
         ogType="article"
       />
-      <JsonLd data={buildDestinationSchema(destination)} />
+      <JsonLd data={buildDestinationSchema({ name: destination.name, country: destination.country, description: destination.description || '', slug: destination.slug })} />
       {faqs.length > 0 && <JsonLd data={buildFAQSchema(faqs)} />}
       <JsonLd data={buildBreadcrumbSchema([
         { name: 'Início', url: 'https://decolandoemviagens.com' },

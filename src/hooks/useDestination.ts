@@ -13,6 +13,13 @@ export interface Destination {
   visa_required: boolean | null;
   visa_info: unknown;
   climate: unknown;
+  currency: string | null;
+  language: string | null;
+  timezone: string | null;
+  safety_index: number | null;
+  healthcare_info: string | null;
+  transport_info: string | null;
+  internet_info: string | null;
   neighborhoods: unknown;
   common_scams: unknown;
   documents_required: unknown;
