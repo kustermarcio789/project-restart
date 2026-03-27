@@ -109,6 +109,50 @@ export type Database = {
         }
         Relationships: []
       }
+      automation_logs: {
+        Row: {
+          automation_type: string
+          channel: string
+          created_at: string | null
+          executed_at: string | null
+          id: string
+          lead_id: string | null
+          payload: Json | null
+          result: Json | null
+          status: string | null
+        }
+        Insert: {
+          automation_type: string
+          channel: string
+          created_at?: string | null
+          executed_at?: string | null
+          id?: string
+          lead_id?: string | null
+          payload?: Json | null
+          result?: Json | null
+          status?: string | null
+        }
+        Update: {
+          automation_type?: string
+          channel?: string
+          created_at?: string | null
+          executed_at?: string | null
+          id?: string
+          lead_id?: string | null
+          payload?: Json | null
+          result?: Json | null
+          status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "automation_logs_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       blog_posts: {
         Row: {
           author_name: string | null
