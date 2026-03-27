@@ -153,14 +153,16 @@ const AdminDashboard = () => {
 
   const handleAddProvider = async () => {
     try {
-      const sbAny = supabase as any;
-      const { error } = await sbAny.from('providers').insert({
-        name: newProvider.name,
-        service_type: newProvider.service_type,
-        commission_rate: parseFloat(newProvider.commission_rate),
-        status: 'pending',
+      const token = sessionStorage.getItem('admin_session_token') || '';
+      const { data, error } = await (supabase as any).rpc('admin_add_provider', {
+        p_session_token: token,
+        p_name: newProvider.name,
+        p_service_type: newProvider.service_type,
+        p_commission_rate: parseFloat(newProvider.commission_rate),
       });
       if (error) throw error;
+      const result = data as any;
+      if (!result?.success) throw new Error(result?.error || 'Erro');
       toast({ title: 'Prestador adicionado com sucesso!' });
       setShowProviderForm(false);
       setNewProvider({ name: '', service_type: '', commission_rate: '10' });
@@ -172,19 +174,21 @@ const AdminDashboard = () => {
 
   const handleAddBooking = async () => {
     try {
-      const sbAny = supabase as any;
       const bookingCode = `BK-${String(bookings.length + 1).padStart(3, '0')}`;
-      const { error } = await sbAny.from('bookings').insert({
-        booking_code: bookingCode,
-        traveler_name: newBooking.traveler_name,
-        traveler_email: newBooking.traveler_email || null,
-        destination: newBooking.destination,
-        travel_date: newBooking.travel_date || null,
-        amount: parseFloat(newBooking.amount),
-        provider_id: newBooking.provider_id || null,
-        status: 'pending',
+      const token = sessionStorage.getItem('admin_session_token') || '';
+      const { data, error } = await (supabase as any).rpc('admin_add_booking', {
+        p_session_token: token,
+        p_booking_code: bookingCode,
+        p_traveler_name: newBooking.traveler_name,
+        p_traveler_email: newBooking.traveler_email || '',
+        p_destination: newBooking.destination,
+        p_travel_date: newBooking.travel_date || '',
+        p_amount: parseFloat(newBooking.amount),
+        p_provider_id: newBooking.provider_id || '',
       });
       if (error) throw error;
+      const result = data as any;
+      if (!result?.success) throw new Error(result?.error || 'Erro');
       toast({ title: 'Reserva adicionada com sucesso!' });
       setShowBookingForm(false);
       setNewBooking({ traveler_name: '', traveler_email: '', destination: '', travel_date: '', amount: '', provider_id: '' });
