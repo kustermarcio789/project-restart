@@ -72,6 +72,7 @@ interface FollowUpAction {
   priority: string;
   contact: string;
   context: string;
+  type?: string;
 }
 
 interface WhatsAppTemplate {
@@ -81,6 +82,16 @@ interface WhatsAppTemplate {
   message: string;
   whatsapp_url: string;
   priority: string;
+  type?: string;
+}
+
+interface EmailTemplate {
+  lead_id: string;
+  name: string;
+  email: string;
+  subject: string;
+  priority: string;
+  type?: string;
 }
 
 const STAGES = [
