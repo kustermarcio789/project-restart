@@ -4,8 +4,9 @@ import { motion } from 'framer-motion';
 import {
   LayoutDashboard, Users, Calendar, DollarSign, LogOut, Plane,
   TrendingUp, UserCheck, CreditCard, BarChart3, ChevronRight, Search,
-  CheckCircle2, Clock, XCircle, MoreHorizontal, Plus, X
+  CheckCircle2, Clock, XCircle, MoreHorizontal, Plus, X, Target
 } from 'lucide-react';
+import { LeadsPipeline } from '@/components/admin/LeadsPipeline';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -15,7 +16,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
-type Tab = 'dashboard' | 'providers' | 'bookings' | 'commissions';
+type Tab = 'dashboard' | 'leads' | 'providers' | 'bookings' | 'commissions';
 
 interface DashboardStats {
   total_bookings: number;
@@ -227,6 +228,7 @@ const AdminDashboard = () => {
 
   const tabs = [
     { id: 'dashboard' as const, label: 'Dashboard', icon: LayoutDashboard },
+    { id: 'leads' as const, label: 'Leads', icon: Target },
     { id: 'providers' as const, label: 'Prestadores', icon: Users },
     { id: 'bookings' as const, label: 'Reservas', icon: Calendar },
     { id: 'commissions' as const, label: 'Comissões', icon: DollarSign },
@@ -373,6 +375,17 @@ const AdminDashboard = () => {
                   </table>
                 </div>
               </div>
+            </motion.div>
+          )}
+
+          {/* Leads Tab */}
+          {!loading && tab === 'leads' && (
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+              <div className="mb-6">
+                <h1 className="text-2xl font-bold mb-1" style={{ fontFamily: "'DM Serif Display', serif" }}>Pipeline de Leads</h1>
+                <p className="text-sm text-muted-foreground">Gerencie leads, cotações e conversões</p>
+              </div>
+              <LeadsPipeline sessionToken={sessionStorage.getItem('admin_session_token') || ''} />
             </motion.div>
           )}
 

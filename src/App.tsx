@@ -15,6 +15,7 @@ const BookingCancel = lazy(() => import("./pages/BookingCancel"));
 const AdminLogin = lazy(() => import("./pages/AdminLogin"));
 const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
 const DestinationPage = lazy(() => import("./pages/DestinationPage"));
+const QuotePage = lazy(() => import("./pages/QuotePage"));
 
 const queryClient = new QueryClient();
 
@@ -37,6 +38,7 @@ const App = () => (
                 <Routes>
                   <Route path="/" element={<Index />} />
                   <Route path="/destino/:slug" element={<DestinationPage />} />
+                  <Route path="/cotacao" element={<QuotePage />} />
                   <Route path="/booking/success" element={<BookingSuccess />} />
                   <Route path="/booking/cancel" element={<BookingCancel />} />
                   <Route path="/admin" element={<AdminLogin />} />

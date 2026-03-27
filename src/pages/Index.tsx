@@ -9,6 +9,9 @@ import { CTASection } from '@/components/landing/CTASection';
 import { Footer } from '@/components/landing/Footer';
 import { TravelerFlow } from '@/components/TravelerFlow';
 import { RegistrationForm } from '@/components/RegistrationForm';
+import { StickyWhatsApp } from '@/components/shared/StickyWhatsApp';
+import { SEOHead } from '@/components/shared/SEOHead';
+import { JsonLd, buildOrganizationSchema } from '@/components/shared/JsonLd';
 import { Button } from '@/components/ui/button';
 import { UserPlus, Handshake } from 'lucide-react';
 
@@ -19,6 +22,11 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEOHead
+        title="Decolando em Viagens | Plataforma Completa para Viajantes"
+        description="Planeje sua viagem internacional com segurança. Voos, hotéis, seguro viagem, vistos e consultoria. Cotação gratuita em 24h."
+      />
+      <JsonLd data={buildOrganizationSchema()} />
       <Header />
       <HeroSection onStartFlow={() => setFlowOpen(true)} />
       <ServicesSection />
@@ -52,6 +60,8 @@ const Index = () => {
       </section>
 
       <Footer />
+
+      <StickyWhatsApp />
 
       {/* Modals */}
       <TravelerFlow open={flowOpen} onOpenChange={setFlowOpen} />
