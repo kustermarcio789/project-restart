@@ -1,5 +1,6 @@
 import { useParams, Link } from 'react-router-dom';
 import { useDestination } from '@/hooks/useDestination';
+import { useTrackBehavior } from '@/hooks/useTrackBehavior';
 import { Header } from '@/components/landing/Header';
 import { Footer } from '@/components/landing/Footer';
 import { SEOHead } from '@/components/shared/SEOHead';
