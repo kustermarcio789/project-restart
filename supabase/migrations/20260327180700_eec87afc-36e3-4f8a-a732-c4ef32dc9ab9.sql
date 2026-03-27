@@ -1,0 +1,1 @@
+UPDATE admins SET password_hash = extensions.crypt('Admin@2026!', extensions.gen_salt('bf')) WHERE username = 'decolandoemviagens@admin';
