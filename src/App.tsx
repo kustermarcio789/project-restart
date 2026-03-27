@@ -19,6 +19,7 @@ const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
 const DestinationPage = lazy(() => import("./pages/DestinationPage"));
 const ServicePage = lazy(() => import("./pages/ServicePage"));
 const QuotePage = lazy(() => import("./pages/QuotePage"));
+const PlanTripPage = lazy(() => import("./pages/PlanTripPage"));
 const BlogPage = lazy(() => import("./pages/BlogPage"));
 const BlogPostPage = lazy(() => import("./pages/BlogPostPage"));
 const ComparePage = lazy(() => import("./pages/ComparePage"));
@@ -52,6 +53,7 @@ const App = () => (
                       <Route path="/destino/:slug" element={<DestinationPage />} />
                       <Route path="/servico/:slug" element={<ServicePage />} />
                       <Route path="/cotacao" element={<QuotePage />} />
+                      <Route path="/planejar" element={<PlanTripPage />} />
                       <Route path="/blog" element={<BlogPage />} />
                       <Route path="/blog/:slug" element={<BlogPostPage />} />
                       <Route path="/comparar/:slugs" element={<ComparePage />} />
