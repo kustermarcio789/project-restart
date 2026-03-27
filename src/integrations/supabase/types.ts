@@ -1251,6 +1251,28 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      admin_add_booking: {
+        Args: {
+          p_amount: number
+          p_booking_code: string
+          p_destination: string
+          p_provider_id: string
+          p_session_token: string
+          p_travel_date: string
+          p_traveler_email: string
+          p_traveler_name: string
+        }
+        Returns: Json
+      }
+      admin_add_provider: {
+        Args: {
+          p_commission_rate: number
+          p_name: string
+          p_service_type: string
+          p_session_token: string
+        }
+        Returns: Json
+      }
       admin_batch_score_leads: {
         Args: { p_session_token: string }
         Returns: Json
