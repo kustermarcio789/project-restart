@@ -7,6 +7,7 @@ import {
   CheckCircle2, Clock, XCircle, MoreHorizontal, Plus, X, Target
 } from 'lucide-react';
 import { LeadsPipeline } from '@/components/admin/LeadsPipeline';
+import { CommercialDashboard } from '@/components/admin/CommercialDashboard';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -318,63 +319,7 @@ const AdminDashboard = () => {
                 <p className="text-sm text-muted-foreground">Visão geral da plataforma</p>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                {[
-                  { label: 'Total Reservas', value: stats.total_bookings.toLocaleString(), icon: Calendar, color: 'text-primary' },
-                  { label: 'Prestadores Ativos', value: stats.active_providers.toString(), icon: UserCheck, color: 'text-emerald-500' },
-                  { label: 'Receita Total', value: `R$ ${Number(stats.total_revenue).toLocaleString()}`, icon: CreditCard, color: 'text-accent' },
-                  { label: 'Comissões', value: `R$ ${commissionsByProvider.reduce((s, c) => s + c.totalCommission, 0).toLocaleString()}`, icon: TrendingUp, color: 'text-primary' },
-                ].map((metric, i) => (
-                  <motion.div key={i} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.08 }} className="glass-card glow-border p-5">
-                    <div className="flex items-center justify-between mb-3">
-                      <span className="text-xs text-muted-foreground uppercase tracking-wide">{metric.label}</span>
-                      <metric.icon className={`h-4 w-4 ${metric.color}`} />
-                    </div>
-                    <div className="text-2xl font-bold" style={{ fontFamily: "'DM Serif Display', serif" }}>{metric.value}</div>
-                  </motion.div>
-                ))}
-              </div>
-
-              <div className="glass-card glow-border overflow-hidden">
-                <div className="p-5 border-b border-border flex items-center justify-between">
-                  <h3 className="font-semibold" style={{ fontFamily: "'DM Serif Display', serif" }}>Reservas Recentes</h3>
-                  <Button variant="ghost" size="sm" onClick={() => setTab('bookings')} className="text-primary text-xs gap-1">
-                    Ver todas <ChevronRight className="h-3 w-3" />
-                  </Button>
-                </div>
-                <div className="overflow-x-auto">
-                  <table className="w-full text-sm">
-                    <thead>
-                      <tr className="border-b border-border text-muted-foreground text-xs uppercase tracking-wide">
-                        <th className="text-left p-4">ID</th>
-                        <th className="text-left p-4">Viajante</th>
-                        <th className="text-left p-4">Destino</th>
-                        <th className="text-left p-4">Valor</th>
-                        <th className="text-left p-4">Status</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {bookings.slice(0, 5).map(b => {
-                        const StatusIcon = statusIcons[b.status];
-                        return (
-                          <tr key={b.id} className="border-b border-border/50 hover:bg-muted/30 transition-colors">
-                            <td className="p-4 font-mono text-xs text-muted-foreground">{b.booking_code}</td>
-                            <td className="p-4 font-medium">{b.traveler_name}</td>
-                            <td className="p-4 text-muted-foreground">{b.destination}</td>
-                            <td className="p-4 font-medium text-accent">R$ {Number(b.amount).toLocaleString()}</td>
-                            <td className="p-4">
-                              <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border ${statusColors[b.status]}`}>
-                                <StatusIcon className="h-3 w-3" />
-                                {b.status === 'confirmed' ? 'Confirmado' : b.status === 'pending' ? 'Pendente' : 'Cancelado'}
-                              </span>
-                            </td>
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
+              <CommercialDashboard sessionToken={sessionStorage.getItem('admin_session_token') || ''} />
             </motion.div>
           )}
 
