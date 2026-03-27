@@ -12,6 +12,7 @@ import { RegistrationForm } from '@/components/RegistrationForm';
 import { StickyWhatsApp } from '@/components/shared/StickyWhatsApp';
 import { SEOHead } from '@/components/shared/SEOHead';
 import { JsonLd, buildOrganizationSchema } from '@/components/shared/JsonLd';
+import { RecommendationBlock } from '@/components/recommendations/RecommendationBlock';
 import { Button } from '@/components/ui/button';
 import { UserPlus, Handshake } from 'lucide-react';
 
