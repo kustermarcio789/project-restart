@@ -1263,6 +1263,10 @@ export type Database = {
         Args: { p_session_token: string }
         Returns: Json
       }
+      admin_get_dashboard_data: {
+        Args: { p_session_token: string }
+        Returns: Json
+      }
       admin_get_followup_queue: {
         Args: { p_session_token: string }
         Returns: Json
