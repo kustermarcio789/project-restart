@@ -1,16 +1,8 @@
 import { motion } from 'framer-motion';
-import { Plane, Building2, Car, Shield, Map, FileText } from 'lucide-react';
+import { Plane, Building2, Car, Shield, Map, FileText, ArrowRight } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 const iconMap = [Plane, Building2, Car, Shield, Map, FileText];
-const gradients = [
-  'from-blue-500/20 to-cyan-500/20',
-  'from-purple-500/20 to-pink-500/20',
-  'from-emerald-500/20 to-teal-500/20',
-  'from-amber-500/20 to-orange-500/20',
-  'from-rose-500/20 to-red-500/20',
-  'from-indigo-500/20 to-violet-500/20',
-];
 
 export const ServicesSection = () => {
   const { t } = useLanguage();
@@ -34,8 +26,9 @@ export const ServicesSection = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-20"
+          className="text-center mb-16"
         >
+          <span className="section-label">Nossos serviços</span>
           <h2 className="text-3xl sm:text-5xl font-bold mb-5" style={{ fontFamily: "'DM Serif Display', serif" }}>
             {t('services.title')}
           </h2>
@@ -52,13 +45,16 @@ export const ServicesSection = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.08, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-                className="glass-card glow-border p-7 cursor-pointer group"
+                className="glass-card p-7 cursor-pointer group"
               >
-                <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${gradients[i]} flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300`}>
-                  <Icon className="h-6 w-6 text-primary" />
+                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-5 group-hover:bg-primary/15 group-hover:scale-105 transition-all duration-300">
+                  <Icon className="h-5 w-5 text-primary" />
                 </div>
                 <h3 className="text-lg font-semibold mb-2" style={{ fontFamily: "'DM Serif Display', serif" }}>{service.title}</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">{service.desc}</p>
+                <p className="text-sm text-muted-foreground leading-relaxed mb-4">{service.desc}</p>
+                <span className="inline-flex items-center gap-1 text-xs font-medium text-primary opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  Saiba mais <ArrowRight className="h-3 w-3" />
+                </span>
               </motion.div>
             );
           })}

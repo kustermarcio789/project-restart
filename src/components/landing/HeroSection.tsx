@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { ArrowRight, Play, Sparkles } from 'lucide-react';
+import { ArrowRight, Play, Shield, Star, Users } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Button } from '@/components/ui/button';
 
@@ -39,20 +39,26 @@ export const HeroSection = ({ onStartFlow }: HeroSectionProps) => {
       </div>
 
       {/* Content */}
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center pt-20 pb-12">
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center pt-24 pb-12">
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
         >
+          {/* Trust badge */}
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5, delay: 0.3 }}
-            className="inline-flex items-center gap-2 mb-8 px-4 py-2 rounded-full glass-panel glow-border text-sm font-medium text-primary"
+            className="inline-flex items-center gap-2 mb-8 px-4 py-2 rounded-full bg-card/80 backdrop-blur-md border border-border shadow-sm text-sm font-medium text-foreground"
           >
-            <Sparkles className="h-3.5 w-3.5" />
-            <span>{t('stats.destinations')}: 120+</span>
+            <div className="flex items-center gap-0.5">
+              {[...Array(5)].map((_, i) => (
+                <Star key={i} className="h-3 w-3 fill-accent text-accent" />
+              ))}
+            </div>
+            <span className="text-muted-foreground">•</span>
+            <span>50.000+ viajantes satisfeitos</span>
           </motion.div>
 
           <h1 className="text-5xl sm:text-7xl lg:text-8xl font-bold leading-[0.95] mb-8 text-shadow-cinematic" style={{ fontFamily: "'DM Serif Display', serif" }}>
@@ -65,7 +71,7 @@ export const HeroSection = ({ onStartFlow }: HeroSectionProps) => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.5 }}
-            className="text-lg sm:text-xl text-muted-foreground max-w-xl mx-auto mb-12 leading-relaxed"
+            className="text-lg sm:text-xl text-muted-foreground max-w-xl mx-auto mb-10 leading-relaxed"
           >
             {t('hero.subtitle')}
           </motion.p>
@@ -87,12 +93,24 @@ export const HeroSection = ({ onStartFlow }: HeroSectionProps) => {
             <Button
               variant="outline"
               size="lg"
-              className="rounded-full px-8 h-14 text-base glass-panel border-border/50 hover:bg-muted/30 hover:border-primary/30 transition-all duration-300"
+              className="rounded-full px-8 h-14 text-base bg-card/60 backdrop-blur-md border-border hover:bg-card/80 hover:border-primary/30 transition-all duration-300"
               onClick={() => document.querySelector('#destinations')?.scrollIntoView({ behavior: 'smooth' })}
             >
               <Play className="mr-2 h-4 w-4" />
               {t('hero.ctaSecondary')}
             </Button>
+          </motion.div>
+
+          {/* Trust indicators under CTAs */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.9 }}
+            className="flex flex-wrap items-center justify-center gap-6 mt-8 text-xs text-muted-foreground"
+          >
+            <span className="flex items-center gap-1.5"><Shield className="h-3.5 w-3.5 text-primary" /> Pagamento seguro</span>
+            <span className="flex items-center gap-1.5"><Users className="h-3.5 w-3.5 text-primary" /> Suporte 24/7</span>
+            <span className="flex items-center gap-1.5"><Star className="h-3.5 w-3.5 text-accent fill-accent" /> Nota 4.9/5</span>
           </motion.div>
         </motion.div>
 
@@ -100,13 +118,13 @@ export const HeroSection = ({ onStartFlow }: HeroSectionProps) => {
         <motion.div
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.9, ease: [0.22, 1, 0.36, 1] }}
-          className="mt-20 sm:mt-28 glass-panel glow-border rounded-2xl p-8 sm:p-10 max-w-3xl mx-auto"
+          transition={{ duration: 0.8, delay: 1, ease: [0.22, 1, 0.36, 1] }}
+          className="mt-20 sm:mt-28 bg-card/80 backdrop-blur-xl border border-border rounded-2xl p-8 sm:p-10 max-w-3xl mx-auto shadow-lg shadow-foreground/[0.03]"
         >
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-8">
             {[
               { value: '50K+', label: t('stats.travelers') },
-              { value: '120+', label: t('stats.destinations') },
+              { value: '150+', label: t('stats.destinations') },
               { value: '24/7', label: t('stats.support') },
               { value: '4.9', label: t('stats.rating') },
             ].map((stat, i) => (
@@ -114,7 +132,7 @@ export const HeroSection = ({ onStartFlow }: HeroSectionProps) => {
                 key={i}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 1.1 + i * 0.1 }}
+                transition={{ delay: 1.2 + i * 0.1 }}
                 className="text-center"
               >
                 <div className="text-2xl sm:text-3xl font-bold gradient-text" style={{ fontFamily: "'DM Serif Display', serif" }}>{stat.value}</div>

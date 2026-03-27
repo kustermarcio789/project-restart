@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Shield, Clock, CheckCircle2 } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -11,6 +11,7 @@ interface CTASectionProps {
 export const CTASection = ({ onStartFlow }: CTASectionProps) => {
   const { t } = useLanguage();
   const navigate = useNavigate();
+
   return (
     <section id="cta" className="py-24 sm:py-32">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -29,7 +30,7 @@ export const CTASection = ({ onStartFlow }: CTASectionProps) => {
               className="w-full h-full object-cover"
               loading="lazy"
             />
-            <div className="absolute inset-0 bg-gradient-to-br from-[hsl(199,89%,30%)] via-[hsl(220,80%,25%)] to-[hsl(260,70%,25%)] opacity-85" />
+            <div className="absolute inset-0 bg-gradient-to-br from-[hsl(200,80%,25%)] via-[hsl(215,72%,22%)] to-[hsl(230,65%,20%)] opacity-90" />
           </div>
 
           {/* Content */}
@@ -37,9 +38,17 @@ export const CTASection = ({ onStartFlow }: CTASectionProps) => {
             <h2 className="text-3xl sm:text-5xl lg:text-6xl font-bold text-white mb-5 leading-tight" style={{ fontFamily: "'DM Serif Display', serif" }}>
               {t('cta.title')}
             </h2>
-            <p className="text-white/70 text-lg max-w-xl mx-auto mb-10">
+            <p className="text-white/70 text-lg max-w-xl mx-auto mb-8">
               {t('cta.subtitle')}
             </p>
+
+            {/* Trust points */}
+            <div className="flex flex-wrap items-center justify-center gap-6 mb-10 text-white/60 text-xs">
+              <span className="flex items-center gap-1.5"><CheckCircle2 className="h-3.5 w-3.5" /> Cotação gratuita</span>
+              <span className="flex items-center gap-1.5"><Clock className="h-3.5 w-3.5" /> Resposta em 24h</span>
+              <span className="flex items-center gap-1.5"><Shield className="h-3.5 w-3.5" /> Sem compromisso</span>
+            </div>
+
             <Button
               size="lg"
               className="rounded-full px-10 h-14 text-base bg-white text-foreground hover:bg-white/90 font-semibold border-0 shadow-xl shadow-black/20 transition-all duration-300 hover:shadow-2xl hover:-translate-y-0.5"
