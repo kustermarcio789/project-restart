@@ -1,5 +1,6 @@
 import { useParams, Link } from 'react-router-dom';
 import { useService } from '@/hooks/useService';
+import { useTrackBehavior } from '@/hooks/useTrackBehavior';
 import { Header } from '@/components/landing/Header';
 import { Footer } from '@/components/landing/Footer';
 import { SEOHead } from '@/components/shared/SEOHead';
@@ -21,6 +22,7 @@ const ServicePage = () => {
   const { slug } = useParams<{ slug: string }>();
   const { data: service, isLoading, error } = useService(slug || '');
   const navigate = useNavigate();
+  useTrackBehavior({ entityType: 'service', entitySlug: slug || '' });
 
   if (isLoading) {
     return (
