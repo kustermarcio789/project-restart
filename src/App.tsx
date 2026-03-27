@@ -22,6 +22,10 @@ const QuotePage = lazy(() => import("./pages/QuotePage"));
 const BlogPage = lazy(() => import("./pages/BlogPage"));
 const BlogPostPage = lazy(() => import("./pages/BlogPostPage"));
 const ComparePage = lazy(() => import("./pages/ComparePage"));
+const AuthPage = lazy(() => import("./pages/AuthPage"));
+const ForgotPasswordPage = lazy(() => import("./pages/ForgotPasswordPage"));
+const ResetPasswordPage = lazy(() => import("./pages/ResetPasswordPage"));
+const ClientDashboard = lazy(() => import("./pages/ClientDashboard"));
 
 const queryClient = new QueryClient();
 
