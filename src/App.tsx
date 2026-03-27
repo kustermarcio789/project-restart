@@ -20,6 +20,7 @@ const ServicePage = lazy(() => import("./pages/ServicePage"));
 const QuotePage = lazy(() => import("./pages/QuotePage"));
 const BlogPage = lazy(() => import("./pages/BlogPage"));
 const BlogPostPage = lazy(() => import("./pages/BlogPostPage"));
+const ComparePage = lazy(() => import("./pages/ComparePage"));
 
 const queryClient = new QueryClient();
 
