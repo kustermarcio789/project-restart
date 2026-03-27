@@ -4,8 +4,9 @@ import { motion } from 'framer-motion';
 import {
   LayoutDashboard, Users, Calendar, DollarSign, LogOut, Plane,
   TrendingUp, UserCheck, CreditCard, BarChart3, ChevronRight, Search,
-  CheckCircle2, Clock, XCircle, MoreHorizontal, Plus, X
+  CheckCircle2, Clock, XCircle, MoreHorizontal, Plus, X, Target
 } from 'lucide-react';
+import { LeadsPipeline } from '@/components/admin/LeadsPipeline';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
