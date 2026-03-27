@@ -53,6 +53,7 @@ const App = () => (
                       <Route path="/destino/:slug" element={<DestinationPage />} />
                       <Route path="/servico/:slug" element={<ServicePage />} />
                       <Route path="/cotacao" element={<QuotePage />} />
+                      <Route path="/planejar" element={<PlanTripPage />} />
                       <Route path="/blog" element={<BlogPage />} />
                       <Route path="/blog/:slug" element={<BlogPostPage />} />
                       <Route path="/comparar/:slugs" element={<ComparePage />} />
