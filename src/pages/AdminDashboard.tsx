@@ -378,6 +378,17 @@ const AdminDashboard = () => {
             </motion.div>
           )}
 
+          {/* Leads Tab */}
+          {!loading && tab === 'leads' && (
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+              <div className="mb-6">
+                <h1 className="text-2xl font-bold mb-1" style={{ fontFamily: "'DM Serif Display', serif" }}>Pipeline de Leads</h1>
+                <p className="text-sm text-muted-foreground">Gerencie leads, cotações e conversões</p>
+              </div>
+              <LeadsPipeline sessionToken={sessionStorage.getItem('admin_session_token') || ''} />
+            </motion.div>
+          )}
+
           {/* Providers Tab */}
           {!loading && tab === 'providers' && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
