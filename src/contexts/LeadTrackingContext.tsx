@@ -48,13 +48,13 @@ export const LeadTrackingProvider = ({ children }: { children: ReactNode }) => {
     setActiveFormId((prev) => (prev === formId ? null : prev));
   }, []);
 
-  // Detect page unload while form is active
+  // Detect page unload while form is active — log to console (beacon to non-existent endpoint removed)
   useEffect(() => {
     if (!activeFormId) return;
     const handler = () => {
-      // Fire-and-forget beacon for abandonment
-      const payload = JSON.stringify({ form_id: activeFormId, ...utmData });
-      navigator.sendBeacon?.('/api/track-abandon', payload);
+      // Note: sendBeacon to Supabase REST API would require auth headers
+      // For now, abandonment is tracked by forms that started but never completed
+      console.debug('[LeadTracking] Form abandoned:', activeFormId);
     };
     window.addEventListener('beforeunload', handler);
     return () => window.removeEventListener('beforeunload', handler);

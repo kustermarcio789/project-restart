@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { LanguageProvider } from "@/contexts/LanguageContext";
+import { LeadTrackingProvider } from "@/contexts/LeadTrackingContext";
 import { lazy, Suspense } from "react";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
@@ -34,19 +35,21 @@ const App = () => (
             <Toaster />
             <Sonner />
             <BrowserRouter>
-              <Suspense fallback={<Loading />}>
-                <Routes>
-                  <Route path="/" element={<Index />} />
-                  <Route path="/destino/:slug" element={<DestinationPage />} />
-                  <Route path="/cotacao" element={<QuotePage />} />
-                  <Route path="/booking/success" element={<BookingSuccess />} />
-                  <Route path="/booking/cancel" element={<BookingCancel />} />
-                  <Route path="/admin" element={<AdminLogin />} />
-                  <Route path="/admin/dashboard" element={<AdminDashboard />} />
-                  {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-                  <Route path="*" element={<NotFound />} />
-                </Routes>
-              </Suspense>
+              <LeadTrackingProvider>
+                <Suspense fallback={<Loading />}>
+                  <Routes>
+                    <Route path="/" element={<Index />} />
+                    <Route path="/destino/:slug" element={<DestinationPage />} />
+                    <Route path="/cotacao" element={<QuotePage />} />
+                    <Route path="/booking/success" element={<BookingSuccess />} />
+                    <Route path="/booking/cancel" element={<BookingCancel />} />
+                    <Route path="/admin" element={<AdminLogin />} />
+                    <Route path="/admin/dashboard" element={<AdminDashboard />} />
+                    {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                    <Route path="*" element={<NotFound />} />
+                  </Routes>
+                </Suspense>
+              </LeadTrackingProvider>
             </BrowserRouter>
           </TooltipProvider>
         </LanguageProvider>
