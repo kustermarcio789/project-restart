@@ -127,10 +127,16 @@ export const TravelerFlow = ({ open, onOpenChange }: TravelerFlowProps) => {
   const dest = allDestinations.find(d => d.id === selectedDest);
   const office = nationality ? getPassportOffice(nationality) : null;
 
-  const filteredDests = allDestinations.filter(d =>
-    d.name.toLowerCase().includes(search.toLowerCase()) ||
-    d.country[language].toLowerCase().includes(search.toLowerCase())
-  );
+  const normalizeStr = (s: string) =>
+    s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+
+  const filteredDests = allDestinations.filter(d => {
+    if (!search.trim()) return true;
+    const q = normalizeStr(search);
+    return normalizeStr(d.name).includes(q) ||
+      normalizeStr(d.country[language]).includes(q) ||
+      normalizeStr(d.region).includes(q);
+  });
 
   const canNext = () => {
     if (step === 0) return !!nationality;
