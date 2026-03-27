@@ -33,6 +33,11 @@ const Index = () => {
       <ServicesSection />
       <HowItWorks />
       <DestinationsSection />
+      <RecommendationBlock
+        title="Destinos Recomendados"
+        subtitle="Os mais procurados pelos nossos viajantes"
+        type="popular"
+      />
       <TestimonialsSection />
       <CTASection onStartFlow={() => setFlowOpen(true)} />
 
