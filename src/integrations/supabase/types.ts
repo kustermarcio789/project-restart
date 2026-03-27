@@ -459,6 +459,53 @@ export type Database = {
         }
         Relationships: []
       }
+      journey_milestones: {
+        Row: {
+          completed: boolean | null
+          completed_at: string | null
+          created_at: string | null
+          description: string | null
+          id: string
+          lead_id: string | null
+          milestone_key: string
+          sort_order: number | null
+          title: string
+          user_id: string
+        }
+        Insert: {
+          completed?: boolean | null
+          completed_at?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          lead_id?: string | null
+          milestone_key: string
+          sort_order?: number | null
+          title: string
+          user_id: string
+        }
+        Update: {
+          completed?: boolean | null
+          completed_at?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          lead_id?: string | null
+          milestone_key?: string
+          sort_order?: number | null
+          title?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "journey_milestones_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       lead_events: {
         Row: {
           channel: string | null
@@ -526,6 +573,7 @@ export type Database = {
           travel_date_to: string | null
           travelers_count: number | null
           updated_at: string
+          user_id: string | null
           utm_campaign: string | null
           utm_content: string | null
           utm_medium: string | null
@@ -557,6 +605,7 @@ export type Database = {
           travel_date_to?: string | null
           travelers_count?: number | null
           updated_at?: string
+          user_id?: string | null
           utm_campaign?: string | null
           utm_content?: string | null
           utm_medium?: string | null
@@ -588,6 +637,7 @@ export type Database = {
           travel_date_to?: string | null
           travelers_count?: number | null
           updated_at?: string
+          user_id?: string | null
           utm_campaign?: string | null
           utm_content?: string | null
           utm_medium?: string | null
@@ -1002,6 +1052,42 @@ export type Database = {
           is_featured?: boolean | null
           name?: string
           rating?: number
+        }
+        Relationships: []
+      }
+      user_documents: {
+        Row: {
+          created_at: string | null
+          document_name: string
+          document_type: string
+          file_url: string | null
+          id: string
+          notes: string | null
+          status: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          document_name: string
+          document_type: string
+          file_url?: string | null
+          id?: string
+          notes?: string | null
+          status?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          document_name?: string
+          document_type?: string
+          file_url?: string | null
+          id?: string
+          notes?: string | null
+          status?: string | null
+          updated_at?: string | null
+          user_id?: string
         }
         Relationships: []
       }
