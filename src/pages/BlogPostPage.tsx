@@ -1,4 +1,5 @@
 import { useParams, Link } from 'react-router-dom';
+import DOMPurify from 'dompurify';
 import { useBlogPost, useBlogPosts } from '@/hooks/useBlog';
 import { Header } from '@/components/landing/Header';
 import { Footer } from '@/components/landing/Footer';
@@ -168,7 +169,11 @@ const BlogPostPage = () => {
               prose-ul:text-muted-foreground prose-ol:text-muted-foreground
               prose-blockquote:border-primary prose-blockquote:text-muted-foreground
               prose-img:rounded-xl"
-            dangerouslySetInnerHTML={{ __html: post.content || '' }}
+            dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(post.content || '', {
+              ALLOWED_TAGS: ['h1','h2','h3','h4','h5','h6','p','a','ul','ol','li','strong','em','blockquote','img','br','span','div','table','thead','tbody','tr','th','td','pre','code','hr'],
+              ALLOWED_ATTR: ['href','src','alt','title','class','target','rel','width','height'],
+              ALLOW_DATA_ATTR: false,
+            }) }}
           />
 
           {/* Tags */}

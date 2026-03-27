@@ -109,67 +109,34 @@ const AdminDashboard = () => {
   const fetchData = async () => {
     setLoading(true);
     try {
-      // Use type casting for tables not yet in generated types
-      const sbAny = supabase as any;
+      const token = sessionStorage.getItem('admin_session_token') || '';
+      const { data, error } = await (supabase as any).rpc('admin_get_dashboard_data', { p_session_token: token });
+      if (error) throw error;
+      const result = data as any;
+      if (!result?.success) throw new Error(result?.error || 'Erro ao carregar dados');
 
-      // Fetch stats via RPC
-      const { data: statsData } = await sbAny.rpc('get_dashboard_stats');
-      if (statsData) setStats(statsData as DashboardStats);
+      if (result.stats) setStats(result.stats as DashboardStats);
 
-      // Fetch bookings
-      const { data: bookingsData } = await sbAny
-        .from('bookings')
-        .select('*')
-        .order('created_at', { ascending: false });
-      if (bookingsData) setBookings(bookingsData as Booking[]);
+      const bookingsData = result.bookings || [];
+      setBookings(bookingsData as Booking[]);
 
-      // Fetch providers
-      const { data: providersData } = await sbAny
-        .from('providers')
-        .select('*')
-        .order('created_at', { ascending: true });
-
-      if (providersData) {
-        const { data: providerStats } = await sbAny
-          .from('bookings')
-          .select('provider_id, amount, status');
-
-        const providerMap = new Map<string, { count: number; revenue: number }>();
-        if (providerStats) {
-          for (const b of providerStats as any[]) {
-            if (!b.provider_id) continue;
-            const existing = providerMap.get(b.provider_id) || { count: 0, revenue: 0 };
-            existing.count++;
-            if (b.status === 'confirmed') existing.revenue += Number(b.amount);
-            providerMap.set(b.provider_id, existing);
-          }
-        }
-
-        setProviders((providersData as Provider[]).map(p => ({
-          ...p,
-          booking_count: providerMap.get(p.id)?.count || 0,
-          total_revenue: providerMap.get(p.id)?.revenue || 0,
-        })));
+      const providersData = result.providers || [];
+      // Calculate provider stats from bookings
+      const providerMap = new Map<string, { count: number; revenue: number }>();
+      for (const b of bookingsData) {
+        if (!b.provider_id) continue;
+        const existing = providerMap.get(b.provider_id) || { count: 0, revenue: 0 };
+        existing.count++;
+        if (b.status === 'confirmed') existing.revenue += Number(b.amount);
+        providerMap.set(b.provider_id, existing);
       }
+      setProviders((providersData as Provider[]).map(p => ({
+        ...p,
+        booking_count: providerMap.get(p.id)?.count || 0,
+        total_revenue: providerMap.get(p.id)?.revenue || 0,
+      })));
 
-      // Fetch commissions
-      const { data: commissionsData } = await sbAny
-        .from('commissions')
-        .select('id, rate, amount, provider_id, booking_id')
-        .order('created_at', { ascending: false });
-
-      if (commissionsData && providersData && bookingsData) {
-        const provMap = new Map((providersData as any[]).map((p: any) => [p.id, p]));
-        const bookMap = new Map((bookingsData as any[]).map((b: any) => [b.id, b]));
-        setCommissions((commissionsData as any[]).map((c: any) => ({
-          id: c.id,
-          rate: c.rate,
-          amount: c.amount,
-          provider_name: provMap.get(c.provider_id)?.name || 'N/A',
-          service_type: provMap.get(c.provider_id)?.service_type || 'N/A',
-          booking_code: bookMap.get(c.booking_id)?.booking_code || 'N/A',
-        })));
-      }
+      setCommissions(result.commissions || []);
     } catch (err: any) {
       toast({ title: 'Erro ao carregar dados', description: err.message, variant: 'destructive' });
     }
@@ -186,14 +153,16 @@ const AdminDashboard = () => {
 
   const handleAddProvider = async () => {
     try {
-      const sbAny = supabase as any;
-      const { error } = await sbAny.from('providers').insert({
-        name: newProvider.name,
-        service_type: newProvider.service_type,
-        commission_rate: parseFloat(newProvider.commission_rate),
-        status: 'pending',
+      const token = sessionStorage.getItem('admin_session_token') || '';
+      const { data, error } = await (supabase as any).rpc('admin_add_provider', {
+        p_session_token: token,
+        p_name: newProvider.name,
+        p_service_type: newProvider.service_type,
+        p_commission_rate: parseFloat(newProvider.commission_rate),
       });
       if (error) throw error;
+      const result = data as any;
+      if (!result?.success) throw new Error(result?.error || 'Erro');
       toast({ title: 'Prestador adicionado com sucesso!' });
       setShowProviderForm(false);
       setNewProvider({ name: '', service_type: '', commission_rate: '10' });
@@ -205,19 +174,21 @@ const AdminDashboard = () => {
 
   const handleAddBooking = async () => {
     try {
-      const sbAny = supabase as any;
       const bookingCode = `BK-${String(bookings.length + 1).padStart(3, '0')}`;
-      const { error } = await sbAny.from('bookings').insert({
-        booking_code: bookingCode,
-        traveler_name: newBooking.traveler_name,
-        traveler_email: newBooking.traveler_email || null,
-        destination: newBooking.destination,
-        travel_date: newBooking.travel_date || null,
-        amount: parseFloat(newBooking.amount),
-        provider_id: newBooking.provider_id || null,
-        status: 'pending',
+      const token = sessionStorage.getItem('admin_session_token') || '';
+      const { data, error } = await (supabase as any).rpc('admin_add_booking', {
+        p_session_token: token,
+        p_booking_code: bookingCode,
+        p_traveler_name: newBooking.traveler_name,
+        p_traveler_email: newBooking.traveler_email || '',
+        p_destination: newBooking.destination,
+        p_travel_date: newBooking.travel_date || '',
+        p_amount: parseFloat(newBooking.amount),
+        p_provider_id: newBooking.provider_id || '',
       });
       if (error) throw error;
+      const result = data as any;
+      if (!result?.success) throw new Error(result?.error || 'Erro');
       toast({ title: 'Reserva adicionada com sucesso!' });
       setShowBookingForm(false);
       setNewBooking({ traveler_name: '', traveler_email: '', destination: '', travel_date: '', amount: '', provider_id: '' });

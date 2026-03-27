@@ -35,6 +35,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []);
 
   const signUp = async (email: string, password: string, fullName: string) => {
+    // Password complexity validation
+    if (password.length < 8) {
+      return { error: new Error('A senha deve ter pelo menos 8 caracteres.') };
+    }
+    if (!/[A-Z]/.test(password) || !/[a-z]/.test(password) || !/[0-9]/.test(password)) {
+      return { error: new Error('A senha deve conter letras maiúsculas, minúsculas e números.') };
+    }
+
     const { error } = await supabase.auth.signUp({
       email,
       password,

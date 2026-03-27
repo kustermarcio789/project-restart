@@ -1248,9 +1248,71 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      provider_reviews_public: {
+        Row: {
+          comment: string | null
+          created_at: string | null
+          destination: string | null
+          id: string | null
+          is_approved: boolean | null
+          provider_id: string | null
+          rating: number | null
+          reviewer_name: string | null
+        }
+        Insert: {
+          comment?: string | null
+          created_at?: string | null
+          destination?: string | null
+          id?: string | null
+          is_approved?: boolean | null
+          provider_id?: string | null
+          rating?: number | null
+          reviewer_name?: string | null
+        }
+        Update: {
+          comment?: string | null
+          created_at?: string | null
+          destination?: string | null
+          id?: string | null
+          is_approved?: boolean | null
+          provider_id?: string | null
+          rating?: number | null
+          reviewer_name?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "provider_reviews_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: false
+            referencedRelation: "providers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
+      admin_add_booking: {
+        Args: {
+          p_amount: number
+          p_booking_code: string
+          p_destination: string
+          p_provider_id: string
+          p_session_token: string
+          p_travel_date: string
+          p_traveler_email: string
+          p_traveler_name: string
+        }
+        Returns: Json
+      }
+      admin_add_provider: {
+        Args: {
+          p_commission_rate: number
+          p_name: string
+          p_service_type: string
+          p_session_token: string
+        }
+        Returns: Json
+      }
       admin_batch_score_leads: {
         Args: { p_session_token: string }
         Returns: Json
@@ -1260,6 +1322,10 @@ export type Database = {
         Returns: Json
       }
       admin_get_commercial_stats: {
+        Args: { p_session_token: string }
+        Returns: Json
+      }
+      admin_get_dashboard_data: {
         Args: { p_session_token: string }
         Returns: Json
       }

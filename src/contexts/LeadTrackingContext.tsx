@@ -142,11 +142,21 @@ export const LeadTrackingProvider = ({ children }: { children: ReactNode }) => {
           description: `Abandonou formulário ao sair: ${activeFormId}`,
           metadata: { form_id: activeFormId, session_id: sessionId.current },
         });
-        // Best-effort beacon
-        navigator.sendBeacon?.(
-          `${import.meta.env.VITE_SUPABASE_URL}/rest/v1/lead_events`,
-          new Blob([payload], { type: 'application/json' })
-        );
+        // Best-effort beacon with auth headers
+        const headers = {
+          'Content-Type': 'application/json',
+          'apikey': import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || '',
+        };
+        const blob = new Blob([JSON.stringify({
+          ...JSON.parse(payload),
+        })], { type: 'application/json' });
+        // sendBeacon cannot set custom headers, use fetch keepalive instead
+        fetch(`${import.meta.env.VITE_SUPABASE_URL}/rest/v1/lead_events`, {
+          method: 'POST',
+          headers,
+          body: blob,
+          keepalive: true,
+        }).catch(() => {});
       }
     };
     window.addEventListener('beforeunload', handler);
