@@ -120,6 +120,7 @@ export const LeadsPipeline = ({ sessionToken }: Props) => {
   const [sortBy, setSortBy] = useState<'date' | 'score'>('score');
   const [followUpActions, setFollowUpActions] = useState<FollowUpAction[]>([]);
   const [whatsappTemplates, setWhatsappTemplates] = useState<WhatsAppTemplate[]>([]);
+  const [emailTemplates, setEmailTemplates] = useState<EmailTemplate[]>([]);
   const [showFollowUps, setShowFollowUps] = useState(false);
   const [scoring, setScoring] = useState(false);
   const [followupNote, setFollowupNote] = useState('');
