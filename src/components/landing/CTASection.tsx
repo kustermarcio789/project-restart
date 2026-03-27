@@ -43,7 +43,7 @@ export const CTASection = ({ onStartFlow }: CTASectionProps) => {
             <Button
               size="lg"
               className="rounded-full px-10 h-14 text-base bg-white text-foreground hover:bg-white/90 font-semibold border-0 shadow-xl shadow-black/20 transition-all duration-300 hover:shadow-2xl hover:-translate-y-0.5"
-              onClick={onStartFlow}
+              onClick={() => navigate('/cotacao')}
             >
               {t('cta.button')}
               <ArrowRight className="ml-2 h-5 w-5" />
