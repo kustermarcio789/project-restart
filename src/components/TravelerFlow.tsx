@@ -364,6 +364,12 @@ export const TravelerFlow = ({ open, onOpenChange }: TravelerFlowProps) => {
                   <Input placeholder={t('flow.selectDest')} value={search} onChange={e => setSearch(e.target.value)} className="pl-10 bg-muted/50 border-border" />
                 </div>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 max-h-[300px] overflow-y-auto pr-1">
+                  {filteredDests.length === 0 && (
+                    <div className="col-span-full text-center py-8 text-muted-foreground">
+                      <Search className="h-8 w-8 mx-auto mb-2 opacity-50" />
+                      <p className="text-sm">{language === 'pt' ? 'Nenhum destino encontrado. Tente outro nome.' : language === 'en' ? 'No destinations found. Try another name.' : 'Ningún destino encontrado. Intente otro nombre.'}</p>
+                    </div>
+                  )}
                   {filteredDests.map(d => (
                     <button key={d.id} onClick={() => setSelectedDest(d.id)} className={`relative rounded-xl overflow-hidden h-28 group transition-all ${selectedDest === d.id ? 'ring-2 ring-primary scale-[1.02]' : 'hover:scale-[1.02]'}`}>
                       <img src={d.image} alt={d.name} className="w-full h-full object-cover" loading="lazy" />
