@@ -38,7 +38,7 @@ export const useDestination = (slug: string) => {
         .maybeSingle();
 
       if (error) throw error;
-      return data as Destination | null;
+      return data as unknown as Destination | null;
     },
     enabled: !!slug,
   });
