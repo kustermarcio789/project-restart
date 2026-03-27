@@ -526,7 +526,7 @@ export const LeadsPipeline = ({ sessionToken }: Props) => {
           </DialogHeader>
           <div className="space-y-6 mt-4">
             {/* Summary */}
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-4 gap-3">
               <div className="glass-panel rounded-xl p-3 text-center">
                 <p className="text-2xl font-bold text-foreground">{followUpActions.length}</p>
                 <p className="text-xs text-muted-foreground">Ações pendentes</p>
@@ -537,7 +537,11 @@ export const LeadsPipeline = ({ sessionToken }: Props) => {
               </div>
               <div className="glass-panel rounded-xl p-3 text-center">
                 <p className="text-2xl font-bold text-primary">{whatsappTemplates.length}</p>
-                <p className="text-xs text-muted-foreground">WhatsApp prontos</p>
+                <p className="text-xs text-muted-foreground">WhatsApp</p>
+              </div>
+              <div className="glass-panel rounded-xl p-3 text-center">
+                <p className="text-2xl font-bold text-primary">{followUpActions.filter(a => a.type === 'abandonment_recovery').length}</p>
+                <p className="text-xs text-muted-foreground">Abandonos</p>
               </div>
             </div>
 
