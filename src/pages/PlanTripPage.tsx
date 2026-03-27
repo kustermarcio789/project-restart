@@ -421,7 +421,7 @@ const PlanTripPage = () => {
                     <button
                       onClick={() => set('hasPassport', false)}
                       className={`p-5 rounded-xl border text-center transition-all ${
-                        state.hasPassport === false ? 'border-amber-500 bg-amber-500/10 ring-1 ring-amber-500' : 'border-border bg-card hover:bg-muted/50'
+                        state.hasPassport === false ? 'border-destructive bg-destructive/10 ring-1 ring-destructive' : 'border-border bg-card hover:bg-muted/50'
                       }`}
                     >
                       <span className="text-3xl block mb-2">❌</span>
