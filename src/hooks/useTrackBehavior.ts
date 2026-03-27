@@ -42,11 +42,11 @@ export const trackEvent = async (
   const sessionId = sessionStorage.getItem('session_id') || crypto.randomUUID();
   sessionStorage.setItem('session_id', sessionId);
 
-  await supabase.from('user_behavior').insert({
+  await supabase.from('user_behavior').insert([{
     session_id: sessionId,
     event_type: eventType,
     entity_type: entityType || null,
     entity_slug: entitySlug || null,
     metadata: metadata || {},
-  });
+  }]);
 };
