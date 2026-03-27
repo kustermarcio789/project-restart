@@ -227,6 +227,7 @@ const AdminDashboard = () => {
 
   const tabs = [
     { id: 'dashboard' as const, label: 'Dashboard', icon: LayoutDashboard },
+    { id: 'leads' as const, label: 'Leads', icon: Target },
     { id: 'providers' as const, label: 'Prestadores', icon: Users },
     { id: 'bookings' as const, label: 'Reservas', icon: Calendar },
     { id: 'commissions' as const, label: 'Comissões', icon: DollarSign },
