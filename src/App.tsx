@@ -18,6 +18,8 @@ const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
 const DestinationPage = lazy(() => import("./pages/DestinationPage"));
 const ServicePage = lazy(() => import("./pages/ServicePage"));
 const QuotePage = lazy(() => import("./pages/QuotePage"));
+const BlogPage = lazy(() => import("./pages/BlogPage"));
+const BlogPostPage = lazy(() => import("./pages/BlogPostPage"));
 
 const queryClient = new QueryClient();
 
@@ -43,6 +45,8 @@ const App = () => (
                     <Route path="/destino/:slug" element={<DestinationPage />} />
                     <Route path="/servico/:slug" element={<ServicePage />} />
                     <Route path="/cotacao" element={<QuotePage />} />
+                    <Route path="/blog" element={<BlogPage />} />
+                    <Route path="/blog/:slug" element={<BlogPostPage />} />
                     <Route path="/booking/success" element={<BookingSuccess />} />
                     <Route path="/booking/cancel" element={<BookingCancel />} />
                     <Route path="/admin" element={<AdminLogin />} />
