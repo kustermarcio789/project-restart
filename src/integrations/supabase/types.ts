@@ -70,6 +70,66 @@ export type Database = {
         }
         Relationships: []
       }
+      blog_posts: {
+        Row: {
+          author_name: string | null
+          category: string | null
+          content: string | null
+          cover_image: string | null
+          created_at: string
+          destination_slug: string | null
+          excerpt: string | null
+          id: string
+          published_at: string | null
+          seo_description: string | null
+          seo_title: string | null
+          service_slug: string | null
+          slug: string
+          status: string
+          tags: Json | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          author_name?: string | null
+          category?: string | null
+          content?: string | null
+          cover_image?: string | null
+          created_at?: string
+          destination_slug?: string | null
+          excerpt?: string | null
+          id?: string
+          published_at?: string | null
+          seo_description?: string | null
+          seo_title?: string | null
+          service_slug?: string | null
+          slug: string
+          status?: string
+          tags?: Json | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          author_name?: string | null
+          category?: string | null
+          content?: string | null
+          cover_image?: string | null
+          created_at?: string
+          destination_slug?: string | null
+          excerpt?: string | null
+          id?: string
+          published_at?: string | null
+          seo_description?: string | null
+          seo_title?: string | null
+          service_slug?: string | null
+          slug?: string
+          status?: string
+          tags?: Json | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       bookings: {
         Row: {
           amount: number
@@ -162,6 +222,144 @@ export type Database = {
           },
         ]
       }
+      content_pages: {
+        Row: {
+          content: string | null
+          created_at: string
+          id: string
+          seo_description: string | null
+          seo_title: string | null
+          slug: string
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          content?: string | null
+          created_at?: string
+          id?: string
+          seo_description?: string | null
+          seo_title?: string | null
+          slug: string
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          content?: string | null
+          created_at?: string
+          id?: string
+          seo_description?: string | null
+          seo_title?: string | null
+          slug?: string
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      destinations: {
+        Row: {
+          avg_flight_price: number | null
+          avg_hotel_price: number | null
+          avg_insurance_price: number | null
+          climate: Json | null
+          common_scams: Json | null
+          continent: string
+          cost_of_living_index: number | null
+          country: string
+          created_at: string
+          currency: string | null
+          description: string | null
+          documents_required: Json | null
+          faq: Json | null
+          healthcare_info: string | null
+          hero_image: string | null
+          id: string
+          internet_info: string | null
+          is_featured: boolean | null
+          language: string | null
+          name: string
+          neighborhoods: Json | null
+          safety_index: number | null
+          seo_description: string | null
+          seo_title: string | null
+          slug: string
+          status: string
+          timezone: string | null
+          transport_info: string | null
+          updated_at: string
+          visa_info: Json | null
+          visa_required: boolean | null
+        }
+        Insert: {
+          avg_flight_price?: number | null
+          avg_hotel_price?: number | null
+          avg_insurance_price?: number | null
+          climate?: Json | null
+          common_scams?: Json | null
+          continent?: string
+          cost_of_living_index?: number | null
+          country: string
+          created_at?: string
+          currency?: string | null
+          description?: string | null
+          documents_required?: Json | null
+          faq?: Json | null
+          healthcare_info?: string | null
+          hero_image?: string | null
+          id?: string
+          internet_info?: string | null
+          is_featured?: boolean | null
+          language?: string | null
+          name: string
+          neighborhoods?: Json | null
+          safety_index?: number | null
+          seo_description?: string | null
+          seo_title?: string | null
+          slug: string
+          status?: string
+          timezone?: string | null
+          transport_info?: string | null
+          updated_at?: string
+          visa_info?: Json | null
+          visa_required?: boolean | null
+        }
+        Update: {
+          avg_flight_price?: number | null
+          avg_hotel_price?: number | null
+          avg_insurance_price?: number | null
+          climate?: Json | null
+          common_scams?: Json | null
+          continent?: string
+          cost_of_living_index?: number | null
+          country?: string
+          created_at?: string
+          currency?: string | null
+          description?: string | null
+          documents_required?: Json | null
+          faq?: Json | null
+          healthcare_info?: string | null
+          hero_image?: string | null
+          id?: string
+          internet_info?: string | null
+          is_featured?: boolean | null
+          language?: string | null
+          name?: string
+          neighborhoods?: Json | null
+          safety_index?: number | null
+          seo_description?: string | null
+          seo_title?: string | null
+          slug?: string
+          status?: string
+          timezone?: string | null
+          transport_info?: string | null
+          updated_at?: string
+          visa_info?: Json | null
+          visa_required?: boolean | null
+        }
+        Relationships: []
+      }
       providers: {
         Row: {
           commission_rate: number
@@ -189,6 +387,96 @@ export type Database = {
           service_type?: string
           status?: string
           updated_at?: string
+        }
+        Relationships: []
+      }
+      services: {
+        Row: {
+          created_at: string
+          description: string | null
+          display_order: number | null
+          faq: Json | null
+          features: Json | null
+          hero_image: string | null
+          how_it_works: Json | null
+          icon: string | null
+          id: string
+          name: string
+          seo_description: string | null
+          seo_title: string | null
+          slug: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          display_order?: number | null
+          faq?: Json | null
+          features?: Json | null
+          hero_image?: string | null
+          how_it_works?: Json | null
+          icon?: string | null
+          id?: string
+          name: string
+          seo_description?: string | null
+          seo_title?: string | null
+          slug: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          display_order?: number | null
+          faq?: Json | null
+          features?: Json | null
+          hero_image?: string | null
+          how_it_works?: Json | null
+          icon?: string | null
+          id?: string
+          name?: string
+          seo_description?: string | null
+          seo_title?: string | null
+          slug?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      testimonials: {
+        Row: {
+          avatar_url: string | null
+          comment: string
+          created_at: string
+          destination: string | null
+          id: string
+          is_approved: boolean | null
+          is_featured: boolean | null
+          name: string
+          rating: number
+        }
+        Insert: {
+          avatar_url?: string | null
+          comment: string
+          created_at?: string
+          destination?: string | null
+          id?: string
+          is_approved?: boolean | null
+          is_featured?: boolean | null
+          name: string
+          rating?: number
+        }
+        Update: {
+          avatar_url?: string | null
+          comment?: string
+          created_at?: string
+          destination?: string | null
+          id?: string
+          is_approved?: boolean | null
+          is_featured?: boolean | null
+          name?: string
+          rating?: number
         }
         Relationships: []
       }
