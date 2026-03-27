@@ -22,6 +22,7 @@ const ServicePage = () => {
   const { slug } = useParams<{ slug: string }>();
   const { data: service, isLoading, error } = useService(slug || '');
   const navigate = useNavigate();
+  useTrackBehavior({ entityType: 'service', entitySlug: slug || '' });
 
   if (isLoading) {
     return (

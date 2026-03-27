@@ -25,6 +25,7 @@ import { ArrowLeft } from 'lucide-react';
 const DestinationPage = () => {
   const { slug } = useParams<{ slug: string }>();
   const { data: destination, isLoading, error } = useDestination(slug || '');
+  useTrackBehavior({ entityType: 'destination', entitySlug: slug || '' });
 
   if (isLoading) {
     return (
