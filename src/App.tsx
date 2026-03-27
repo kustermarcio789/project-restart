@@ -16,6 +16,7 @@ const BookingCancel = lazy(() => import("./pages/BookingCancel"));
 const AdminLogin = lazy(() => import("./pages/AdminLogin"));
 const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
 const DestinationPage = lazy(() => import("./pages/DestinationPage"));
+const ServicePage = lazy(() => import("./pages/ServicePage"));
 const QuotePage = lazy(() => import("./pages/QuotePage"));
 
 const queryClient = new QueryClient();
