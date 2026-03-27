@@ -22,6 +22,11 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEOHead
+        title="Decolando em Viagens | Plataforma Completa para Viajantes"
+        description="Planeje sua viagem internacional com segurança. Voos, hotéis, seguro viagem, vistos e consultoria. Cotação gratuita em 24h."
+      />
+      <JsonLd data={buildOrganizationSchema()} />
       <Header />
       <HeroSection onStartFlow={() => setFlowOpen(true)} />
       <ServicesSection />
