@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useBlogPosts, useBlogCategories } from '@/hooks/useBlog';
@@ -7,14 +7,28 @@ import { Footer } from '@/components/landing/Footer';
 import { SEOHead } from '@/components/shared/SEOHead';
 import { JsonLd, buildBreadcrumbSchema } from '@/components/shared/JsonLd';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Calendar, User, Tag } from 'lucide-react';
+import { Calendar, User, Tag, Search } from 'lucide-react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import { Input } from '@/components/ui/input';
 
 const BlogPage = () => {
   const [activeCategory, setActiveCategory] = useState<string | undefined>();
+  const [search, setSearch] = useState('');
   const { data: posts, isLoading } = useBlogPosts(activeCategory);
   const { data: categories } = useBlogCategories();
+
+  const filtered = useMemo(() => {
+    if (!posts) return [];
+    if (!search.trim()) return posts;
+    const q = search.toLowerCase();
+    return posts.filter(
+      (p) =>
+        p.title.toLowerCase().includes(q) ||
+        (p.excerpt && p.excerpt.toLowerCase().includes(q)) ||
+        (p.category && p.category.toLowerCase().includes(q))
+    );
+  }, [posts, search]);
 
   return (
     <div className="min-h-screen bg-background">
@@ -47,12 +61,7 @@ const BlogPage = () => {
       <Header />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-20">
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-12"
-        >
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-12">
           <h1 className="text-3xl sm:text-5xl font-bold text-foreground mb-4">
             Blog de <span className="gradient-text">Viagens</span>
           </h1>
@@ -60,6 +69,19 @@ const BlogPage = () => {
             Dicas, guias, roteiros e tudo que você precisa para planejar sua próxima viagem.
           </p>
         </motion.div>
+
+        {/* Search */}
+        <div className="max-w-md mx-auto mb-8">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Buscar artigos..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="pl-10 rounded-full"
+            />
+          </div>
+        </div>
 
         {/* Category Filter */}
         {categories && categories.length > 0 && (
@@ -101,9 +123,9 @@ const BlogPage = () => {
               </div>
             ))}
           </div>
-        ) : posts && posts.length > 0 ? (
+        ) : filtered.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {posts.map((post, i) => (
+            {filtered.map((post, i) => (
               <motion.article
                 key={post.id}
                 initial={{ opacity: 0, y: 20 }}
@@ -133,9 +155,7 @@ const BlogPage = () => {
                       {post.title}
                     </h2>
                     {post.excerpt && (
-                      <p className="text-sm text-muted-foreground line-clamp-3 mb-3">
-                        {post.excerpt}
-                      </p>
+                      <p className="text-sm text-muted-foreground line-clamp-3 mb-3">{post.excerpt}</p>
                     )}
                     <div className="flex items-center gap-4 text-xs text-muted-foreground">
                       {post.author_name && (
@@ -158,9 +178,33 @@ const BlogPage = () => {
           </div>
         ) : (
           <div className="text-center py-20">
-            <p className="text-muted-foreground text-lg">Nenhum artigo encontrado.</p>
+            <p className="text-muted-foreground text-lg">
+              {search ? 'Nenhum artigo encontrado para essa busca.' : 'Nenhum artigo encontrado.'}
+            </p>
           </div>
         )}
+
+        {/* Internal links */}
+        <section className="mt-16 pt-12 border-t border-border">
+          <h2 className="text-xl font-bold text-foreground mb-6 text-center">Explore nossos guias</h2>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+            {[
+              { label: 'Seguro Viagem', to: '/servico/seguro-viagem' },
+              { label: 'Vistos', to: '/servico/vistos' },
+              { label: 'Voos', to: '/servico/voos' },
+              { label: 'Hotéis', to: '/servico/hoteis' },
+              { label: 'Solicitar Cotação', to: '/cotacao' },
+            ].map((link) => (
+              <Link
+                key={link.to}
+                to={link.to}
+                className="glass-panel rounded-xl p-4 text-center text-sm font-medium text-foreground hover:text-primary hover:border-primary/30 transition-all"
+              >
+                {link.label}
+              </Link>
+            ))}
+          </div>
+        </section>
       </div>
 
       <Footer />
