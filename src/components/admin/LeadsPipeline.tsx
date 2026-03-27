@@ -572,7 +572,34 @@ export const LeadsPipeline = ({ sessionToken }: Props) => {
               </div>
             )}
 
-            {/* All Actions */}
+            {/* Email Templates */}
+            {emailTemplates.length > 0 && (
+              <div>
+                <h3 className="text-sm font-semibold text-foreground mb-3">📧 E-mails Sugeridos</h3>
+                <div className="space-y-3">
+                  {emailTemplates.map((t, i) => (
+                    <div key={i} className="glass-panel rounded-xl p-4 flex items-start justify-between gap-3">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-1">
+                          <p className="font-medium text-sm text-foreground">{t.name}</p>
+                          <Badge variant="outline" className={t.type === 'abandonment_recovery' ? 'text-orange-500 border-orange-500/20' : t.priority === 'urgente' ? 'text-red-500 border-red-500/20' : 'text-yellow-500 border-yellow-500/20'}>
+                            {t.type === 'abandonment_recovery' ? 'abandono' : t.priority}
+                          </Badge>
+                        </div>
+                        <p className="text-xs text-muted-foreground">{t.subject}</p>
+                        <p className="text-xs text-muted-foreground mt-1">{t.email}</p>
+                      </div>
+                      <Button size="sm" variant="outline" className="rounded-xl gap-1 shrink-0" asChild>
+                        <a href={`mailto:${t.email}?subject=${encodeURIComponent(t.subject)}`}>
+                          <Mail className="h-3 w-3" /> Enviar
+                        </a>
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {followUpActions.length > 0 && (
               <div>
                 <h3 className="text-sm font-semibold text-foreground mb-3">📋 Todas as Ações</h3>
