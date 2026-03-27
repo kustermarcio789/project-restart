@@ -18,6 +18,8 @@ const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
 const DestinationPage = lazy(() => import("./pages/DestinationPage"));
 const ServicePage = lazy(() => import("./pages/ServicePage"));
 const QuotePage = lazy(() => import("./pages/QuotePage"));
+const BlogPage = lazy(() => import("./pages/BlogPage"));
+const BlogPostPage = lazy(() => import("./pages/BlogPostPage"));
 
 const queryClient = new QueryClient();
 
