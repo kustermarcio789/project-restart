@@ -15,7 +15,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
-type Tab = 'dashboard' | 'providers' | 'bookings' | 'commissions';
+type Tab = 'dashboard' | 'leads' | 'providers' | 'bookings' | 'commissions';
 
 interface DashboardStats {
   total_bookings: number;
