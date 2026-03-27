@@ -7,6 +7,7 @@ import {
   CheckCircle2, Clock, XCircle, MoreHorizontal, Plus, X, Target
 } from 'lucide-react';
 import { LeadsPipeline } from '@/components/admin/LeadsPipeline';
+import { CommercialDashboard } from '@/components/admin/CommercialDashboard';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
