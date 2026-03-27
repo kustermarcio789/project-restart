@@ -61,6 +61,8 @@ const Index = () => {
 
       <Footer />
 
+      <StickyWhatsApp />
+
       {/* Modals */}
       <TravelerFlow open={flowOpen} onOpenChange={setFlowOpen} />
       <RegistrationForm open={providerOpen} onOpenChange={setProviderOpen} type="provider" />
