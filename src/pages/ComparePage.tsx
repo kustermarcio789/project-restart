@@ -143,16 +143,16 @@ const ComparePage = () => {
               </div>
               <div className="p-4 text-center text-sm text-muted-foreground border-x border-border">
                 {row.highlight && row.valA === 'Não' ? (
-                  <span className="text-green-500 font-medium flex items-center justify-center gap-1"><Check className="h-4 w-4" /> Dispensado</span>
+                  <span className="text-primary font-medium flex items-center justify-center gap-1"><Check className="h-4 w-4" /> Dispensado</span>
                 ) : row.highlight && row.valA === 'Sim' ? (
-                  <span className="text-amber-500 font-medium flex items-center justify-center gap-1"><X className="h-4 w-4" /> Necessário</span>
+                  <span className="text-destructive font-medium flex items-center justify-center gap-1"><X className="h-4 w-4" /> Necessário</span>
                 ) : row.valA}
               </div>
               <div className="p-4 text-center text-sm text-muted-foreground">
                 {row.highlight && row.valB === 'Não' ? (
-                  <span className="text-green-500 font-medium flex items-center justify-center gap-1"><Check className="h-4 w-4" /> Dispensado</span>
+                  <span className="text-primary font-medium flex items-center justify-center gap-1"><Check className="h-4 w-4" /> Dispensado</span>
                 ) : row.highlight && row.valB === 'Sim' ? (
-                  <span className="text-amber-500 font-medium flex items-center justify-center gap-1"><X className="h-4 w-4" /> Necessário</span>
+                  <span className="text-destructive font-medium flex items-center justify-center gap-1"><X className="h-4 w-4" /> Necessário</span>
                 ) : row.valB}
               </div>
             </div>
