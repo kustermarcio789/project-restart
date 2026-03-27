@@ -70,6 +70,45 @@ export type Database = {
         }
         Relationships: []
       }
+      audit_logs: {
+        Row: {
+          action: string
+          actor_id: string | null
+          actor_type: string
+          created_at: string
+          id: string
+          ip_address: string | null
+          new_data: Json | null
+          old_data: Json | null
+          resource_id: string | null
+          resource_type: string
+        }
+        Insert: {
+          action: string
+          actor_id?: string | null
+          actor_type?: string
+          created_at?: string
+          id?: string
+          ip_address?: string | null
+          new_data?: Json | null
+          old_data?: Json | null
+          resource_id?: string | null
+          resource_type: string
+        }
+        Update: {
+          action?: string
+          actor_id?: string | null
+          actor_type?: string
+          created_at?: string
+          id?: string
+          ip_address?: string | null
+          new_data?: Json | null
+          old_data?: Json | null
+          resource_id?: string | null
+          resource_type?: string
+        }
+        Relationships: []
+      }
       blog_posts: {
         Row: {
           author_name: string | null
@@ -258,6 +297,42 @@ export type Database = {
         }
         Relationships: []
       }
+      cost_simulator_presets: {
+        Row: {
+          avg_cost_brl: number
+          avg_cost_eur: number | null
+          avg_cost_usd: number | null
+          category: string
+          created_at: string
+          destination_slug: string
+          id: string
+          item_name: string
+          notes: string | null
+        }
+        Insert: {
+          avg_cost_brl?: number
+          avg_cost_eur?: number | null
+          avg_cost_usd?: number | null
+          category: string
+          created_at?: string
+          destination_slug: string
+          id?: string
+          item_name: string
+          notes?: string | null
+        }
+        Update: {
+          avg_cost_brl?: number
+          avg_cost_eur?: number | null
+          avg_cost_usd?: number | null
+          category?: string
+          created_at?: string
+          destination_slug?: string
+          id?: string
+          item_name?: string
+          notes?: string | null
+        }
+        Relationships: []
+      }
       destinations: {
         Row: {
           avg_flight_price: number | null
@@ -357,6 +432,30 @@ export type Database = {
           updated_at?: string
           visa_info?: Json | null
           visa_required?: boolean | null
+        }
+        Relationships: []
+      }
+      favorites: {
+        Row: {
+          created_at: string
+          destination_slug: string | null
+          id: string
+          service_slug: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          destination_slug?: string | null
+          id?: string
+          service_slug?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          destination_slug?: string | null
+          id?: string
+          service_slug?: string | null
+          user_id?: string
         }
         Relationships: []
       }
@@ -496,6 +595,50 @@ export type Database = {
           utm_term?: string | null
         }
         Relationships: []
+      }
+      notifications: {
+        Row: {
+          admin_id: string | null
+          created_at: string
+          id: string
+          is_read: boolean | null
+          message: string | null
+          metadata: Json | null
+          title: string
+          type: string
+          user_id: string | null
+        }
+        Insert: {
+          admin_id?: string | null
+          created_at?: string
+          id?: string
+          is_read?: boolean | null
+          message?: string | null
+          metadata?: Json | null
+          title: string
+          type?: string
+          user_id?: string | null
+        }
+        Update: {
+          admin_id?: string | null
+          created_at?: string
+          id?: string
+          is_read?: boolean | null
+          message?: string | null
+          metadata?: Json | null
+          title?: string
+          type?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notifications_admin_id_fkey"
+            columns: ["admin_id"]
+            isOneToOne: false
+            referencedRelation: "admins"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       provider_reviews: {
         Row: {
@@ -707,6 +850,27 @@ export type Database = {
           },
         ]
       }
+      rate_limits: {
+        Row: {
+          attempts: number | null
+          blocked_until: string | null
+          first_attempt_at: string | null
+          key: string
+        }
+        Insert: {
+          attempts?: number | null
+          blocked_until?: string | null
+          first_attempt_at?: string | null
+          key: string
+        }
+        Update: {
+          attempts?: number | null
+          blocked_until?: string | null
+          first_attempt_at?: string | null
+          key?: string
+        }
+        Relationships: []
+      }
       services: {
         Row: {
           created_at: string
@@ -761,6 +925,50 @@ export type Database = {
         }
         Relationships: []
       }
+      support_tickets: {
+        Row: {
+          created_at: string
+          id: string
+          lead_id: string | null
+          messages: Json | null
+          priority: string | null
+          status: string
+          subject: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          lead_id?: string | null
+          messages?: Json | null
+          priority?: string | null
+          status?: string
+          subject: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          lead_id?: string | null
+          messages?: Json | null
+          priority?: string | null
+          status?: string
+          subject?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "support_tickets_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       testimonials: {
         Row: {
           avatar_url: string | null
@@ -794,6 +1002,45 @@ export type Database = {
           is_featured?: boolean | null
           name?: string
           rating?: number
+        }
+        Relationships: []
+      }
+      user_profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          full_name: string | null
+          id: string
+          nationality: string | null
+          passport_country: string | null
+          phone: string | null
+          preferred_destinations: Json | null
+          preferred_language: string | null
+          updated_at: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          full_name?: string | null
+          id: string
+          nationality?: string | null
+          passport_country?: string | null
+          phone?: string | null
+          preferred_destinations?: Json | null
+          preferred_language?: string | null
+          updated_at?: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          full_name?: string | null
+          id?: string
+          nationality?: string | null
+          passport_country?: string | null
+          phone?: string | null
+          preferred_destinations?: Json | null
+          preferred_language?: string | null
+          updated_at?: string
         }
         Relationships: []
       }
