@@ -1248,7 +1248,47 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      provider_reviews_public: {
+        Row: {
+          comment: string | null
+          created_at: string | null
+          destination: string | null
+          id: string | null
+          is_approved: boolean | null
+          provider_id: string | null
+          rating: number | null
+          reviewer_name: string | null
+        }
+        Insert: {
+          comment?: string | null
+          created_at?: string | null
+          destination?: string | null
+          id?: string | null
+          is_approved?: boolean | null
+          provider_id?: string | null
+          rating?: number | null
+          reviewer_name?: string | null
+        }
+        Update: {
+          comment?: string | null
+          created_at?: string | null
+          destination?: string | null
+          id?: string | null
+          is_approved?: boolean | null
+          provider_id?: string | null
+          rating?: number | null
+          reviewer_name?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "provider_reviews_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: false
+            referencedRelation: "providers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
       admin_add_booking: {
