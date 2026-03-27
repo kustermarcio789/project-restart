@@ -965,6 +965,45 @@ export type Database = {
         }
         Relationships: []
       }
+      recommendations: {
+        Row: {
+          created_at: string | null
+          entity_slug: string
+          entity_type: string
+          expires_at: string | null
+          id: string
+          metadata: Json | null
+          reason: string | null
+          rec_type: string
+          score: number | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          entity_slug: string
+          entity_type: string
+          expires_at?: string | null
+          id?: string
+          metadata?: Json | null
+          reason?: string | null
+          rec_type: string
+          score?: number | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          entity_slug?: string
+          entity_type?: string
+          expires_at?: string | null
+          id?: string
+          metadata?: Json | null
+          reason?: string | null
+          rec_type?: string
+          score?: number | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       services: {
         Row: {
           created_at: string
@@ -1096,6 +1135,39 @@ export type Database = {
           is_featured?: boolean | null
           name?: string
           rating?: number
+        }
+        Relationships: []
+      }
+      user_behavior: {
+        Row: {
+          created_at: string | null
+          entity_slug: string | null
+          entity_type: string | null
+          event_type: string
+          id: string
+          metadata: Json | null
+          session_id: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          entity_slug?: string | null
+          entity_type?: string | null
+          event_type: string
+          id?: string
+          metadata?: Json | null
+          session_id?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          entity_slug?: string | null
+          entity_type?: string | null
+          event_type?: string
+          id?: string
+          metadata?: Json | null
+          session_id?: string | null
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -1236,6 +1308,10 @@ export type Database = {
         Returns: Json
       }
       calculate_lead_score: { Args: { p_lead_id: string }; Returns: number }
+      generate_recommendations: {
+        Args: { p_user_id?: string }
+        Returns: undefined
+      }
       get_dashboard_stats: { Args: never; Returns: Json }
       is_admin_session: { Args: never; Returns: boolean }
     }
