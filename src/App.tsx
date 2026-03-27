@@ -20,6 +20,7 @@ const ServicePage = lazy(() => import("./pages/ServicePage"));
 const QuotePage = lazy(() => import("./pages/QuotePage"));
 const BlogPage = lazy(() => import("./pages/BlogPage"));
 const BlogPostPage = lazy(() => import("./pages/BlogPostPage"));
+const ComparePage = lazy(() => import("./pages/ComparePage"));
 
 const queryClient = new QueryClient();
 
@@ -47,6 +48,7 @@ const App = () => (
                     <Route path="/cotacao" element={<QuotePage />} />
                     <Route path="/blog" element={<BlogPage />} />
                     <Route path="/blog/:slug" element={<BlogPostPage />} />
+                    <Route path="/comparar/:slugs" element={<ComparePage />} />
                     <Route path="/booking/success" element={<BookingSuccess />} />
                     <Route path="/booking/cancel" element={<BookingCancel />} />
                     <Route path="/admin" element={<AdminLogin />} />
