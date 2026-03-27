@@ -1049,8 +1049,20 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      admin_batch_score_leads: {
+        Args: { p_session_token: string }
+        Returns: Json
+      }
       admin_get_audit_logs: {
         Args: { p_limit?: number; p_offset?: number; p_session_token: string }
+        Returns: Json
+      }
+      admin_get_commercial_stats: {
+        Args: { p_session_token: string }
+        Returns: Json
+      }
+      admin_get_followup_queue: {
+        Args: { p_session_token: string }
         Returns: Json
       }
       admin_get_lead_events: {
@@ -1093,6 +1105,7 @@ export type Database = {
         Args: { p_session_token: string }
         Returns: Json
       }
+      calculate_lead_score: { Args: { p_lead_id: string }; Returns: number }
       get_dashboard_stats: { Args: never; Returns: Json }
       is_admin_session: { Args: never; Returns: boolean }
     }
