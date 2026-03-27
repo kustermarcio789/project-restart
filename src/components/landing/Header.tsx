@@ -134,6 +134,18 @@ export const Header = () => {
               </motion.div>
             </Button>
 
+            {/* Account */}
+            <Button
+              asChild
+              variant="ghost"
+              size="sm"
+              className="text-muted-foreground hover:text-foreground h-9 w-9 p-0"
+            >
+              <Link to="/entrar">
+                <User className="h-4 w-4" />
+              </Link>
+            </Button>
+
             {/* CTA */}
             <Button
               onClick={() => scrollTo('#cta')}
