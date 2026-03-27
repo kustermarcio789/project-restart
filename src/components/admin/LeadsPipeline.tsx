@@ -232,8 +232,9 @@ export const LeadsPipeline = ({ sessionToken }: Props) => {
       if (result.success) {
         setFollowUpActions(result.actions || []);
         setWhatsappTemplates(result.whatsapp_templates || []);
+        setEmailTemplates(result.email_templates || []);
         setShowFollowUps(true);
-        toast.success(`${result.summary.total_actions} ações de follow-up identificadas`);
+        toast.success(`${result.summary.total_actions} ações (${result.summary.abandoned || 0} abandonos)`);
       }
     } catch {
       toast.error('Erro ao executar automação');
