@@ -37,7 +37,7 @@ export const trackEvent = async (
   eventType: string,
   entityType?: string,
   entitySlug?: string,
-  metadata?: Record<string, unknown>
+  metadata?: Record<string, string | number | boolean | null>
 ) => {
   const sessionId = sessionStorage.getItem('session_id') || crypto.randomUUID();
   sessionStorage.setItem('session_id', sessionId);
