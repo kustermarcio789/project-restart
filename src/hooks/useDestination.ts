@@ -56,7 +56,7 @@ export const useFeaturedDestinations = () => {
         .order('name');
 
       if (error) throw error;
-      return (data ?? []) as Destination[];
+      return (data ?? []) as unknown as Destination[];
     },
   });
 };
