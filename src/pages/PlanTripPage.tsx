@@ -22,8 +22,6 @@ import {
   Send,
   AlertTriangle,
   UserPlus,
-  Sparkles,
-  ArrowRight,
   Loader2,
   Lock,
   BadgeCheck,
@@ -1662,28 +1660,6 @@ const PlanTripPage = () => {
               </div>
             </div>
 
-            <div className="rounded-3xl border border-primary/20 bg-primary/5 p-5 shadow-sm">
-              <div className="flex items-center gap-2 mb-2">
-                <Sparkles className="h-4 w-4 text-primary" />
-                <p className="font-semibold text-foreground">Como eu melhoraria ainda mais</p>
-              </div>
-              <p className="text-sm text-muted-foreground mb-4">
-                O fluxo agora já aponta para uma experiência mais premium e orientada a conversão. A próxima fase ideal seria ligar inventário real adicional de hotel, carro, seguro e pagamento no checkout.
-              </p>
-              <div className="space-y-2 text-sm">
-                <div className="rounded-xl bg-background/80 border border-border p-3">1. Funil claro do início ao cadastro.</div>
-                <div className="rounded-xl bg-background/80 border border-border p-3">2. Cards visuais e ofertas com preço destacado.</div>
-                <div className="rounded-xl bg-background/80 border border-border p-3">3. Comparação premium de voo e hospedagem.</div>
-                <div className="rounded-xl bg-background/80 border border-border p-3">4. Resumo lateral fixo durante todo o preenchimento.</div>
-                <div className="rounded-xl bg-background/80 border border-border p-3">5. Alertas de risco e documentação com cores e prioridade.</div>
-                <div className="rounded-xl bg-background/80 border border-border p-3">6. Mais confiança com selos e linguagem operacional.</div>
-                <div className="rounded-xl bg-background/80 border border-border p-3">7. Jornada guiada de assistente, e não só formulário.</div>
-                <div className="rounded-xl bg-background/80 border border-border p-3">8. Revisão final com CTA forte para conta e checkout.</div>
-              </div>
-              <Button className="w-full rounded-full mt-4 gap-2" onClick={() => setStep(10)}>
-                Ir para etapa final <ArrowRight className="h-4 w-4" />
-              </Button>
-            </div>
           </aside>
         </div>
       </div>
