@@ -1,4 +1,12 @@
-import { createContext, useContext, useEffect, useState, useCallback, useRef, ReactNode } from 'react';
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+  type ReactNode,
+} from 'react';
 import { useSearchParams, useLocation } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -14,11 +22,19 @@ interface UTMData {
 
 interface LeadTrackingContextType {
   utmData: UTMData;
-  trackEvent: (eventType: string, metadata?: Record<string, any>) => void;
+  trackEvent: (eventType: string, metadata?: Record<string, unknown>) => void;
   trackFormStart: (formId: string) => void;
   trackFormAbandon: (formId: string) => void;
   setLeadId: (id: string) => void;
 }
+
+type LeadEventPayload = {
+  lead_id: string;
+  event_type: string;
+  channel: 'web';
+  description: string;
+  metadata: Record<string, unknown>;
+};
 
 const LeadTrackingContext = createContext<LeadTrackingContextType | null>(null);
 
@@ -28,9 +44,9 @@ export const useLeadTracking = () => {
   return ctx;
 };
 
-// Session storage key for anonymous tracking
 const SESSION_KEY = 'lt_session';
 const LEAD_KEY = 'lt_lead_id';
+const TRACK_EVENT_FUNCTION = 'track-lead-event';
 
 function getSessionId() {
   let sid = sessionStorage.getItem(SESSION_KEY);
@@ -39,6 +55,19 @@ function getSessionId() {
     sessionStorage.setItem(SESSION_KEY, sid);
   }
   return sid;
+}
+
+function getFunctionEndpoint() {
+  const url = import.meta.env.VITE_SUPABASE_URL;
+  if (!url) return null;
+  return `${url}/functions/v1/${TRACK_EVENT_FUNCTION}`;
+}
+
+function getFunctionHeaders() {
+  return {
+    'Content-Type': 'application/json',
+    apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || '',
+  };
 }
 
 export const LeadTrackingProvider = ({ children }: { children: ReactNode }) => {
@@ -66,43 +95,82 @@ export const LeadTrackingProvider = ({ children }: { children: ReactNode }) => {
     sessionStorage.setItem(LEAD_KEY, id);
   }, []);
 
-  // Track event to lead_events table
-  const trackEvent = useCallback(async (eventType: string, metadata?: Record<string, any>) => {
-    if (!leadIdRef.current) return;
-    try {
-      await supabase.from('lead_events').insert({
+  const buildPayload = useCallback(
+    (eventType: string, metadata?: Record<string, unknown>): LeadEventPayload | null => {
+      if (!leadIdRef.current) return null;
+
+      const description =
+        typeof metadata?.description === 'string' && metadata.description.trim().length > 0
+          ? metadata.description
+          : eventType;
+
+      return {
         lead_id: leadIdRef.current,
         event_type: eventType,
         channel: 'web',
-        description: metadata?.description || eventType,
+        description,
         metadata: {
           ...metadata,
           session_id: sessionId.current,
           page: location.pathname,
           timestamp: new Date().toISOString(),
         },
-      });
-    } catch (e) {
-      console.debug('[LeadTracking] Event failed:', e);
-    }
-  }, [location.pathname]);
+      };
+    },
+    [location.pathname]
+  );
 
-  const trackFormStart = useCallback((formId: string) => {
-    setActiveFormId(formId);
-    trackEvent('start_quote', { form_id: formId, description: `Iniciou formulário: ${formId}` });
-  }, [trackEvent]);
-
-  const trackFormAbandon = useCallback((formId: string) => {
-    setActiveFormId((prev) => {
-      if (prev === formId) {
-        trackEvent('abandon_quote', { form_id: formId, description: `Abandonou formulário: ${formId}` });
-        return null;
-      }
-      return prev;
+  const sendPayload = useCallback(async (payload: LeadEventPayload) => {
+    const { error } = await supabase.functions.invoke(TRACK_EVENT_FUNCTION, {
+      body: payload,
     });
-  }, [trackEvent]);
 
-  // Track page views and detect patterns
+    if (error) {
+      throw error;
+    }
+  }, []);
+
+  const trackEvent = useCallback(
+    async (eventType: string, metadata?: Record<string, unknown>) => {
+      const payload = buildPayload(eventType, metadata);
+      if (!payload) return;
+
+      try {
+        await sendPayload(payload);
+      } catch (e) {
+        console.debug('[LeadTracking] Event failed:', e);
+      }
+    },
+    [buildPayload, sendPayload]
+  );
+
+  const trackFormStart = useCallback(
+    (formId: string) => {
+      setActiveFormId(formId);
+      trackEvent('start_quote', {
+        form_id: formId,
+        description: `Iniciou formulário: ${formId}`,
+      });
+    },
+    [trackEvent]
+  );
+
+  const trackFormAbandon = useCallback(
+    (formId: string) => {
+      setActiveFormId((prev) => {
+        if (prev === formId) {
+          trackEvent('abandon_quote', {
+            form_id: formId,
+            description: `Abandonou formulário: ${formId}`,
+          });
+          return null;
+        }
+        return prev;
+      });
+    },
+    [trackEvent]
+  );
+
   useEffect(() => {
     if (location.pathname === lastPathRef.current) return;
     lastPathRef.current = location.pathname;
@@ -110,7 +178,6 @@ export const LeadTrackingProvider = ({ children }: { children: ReactNode }) => {
 
     if (!leadIdRef.current) return;
 
-    // Track specific page types
     if (location.pathname.startsWith('/destino/')) {
       const slug = location.pathname.split('/destino/')[1];
       trackEvent('view_destino', { slug, description: `Visualizou destino: ${slug}` });
@@ -123,48 +190,42 @@ export const LeadTrackingProvider = ({ children }: { children: ReactNode }) => {
       trackEvent('page_view', { page: 'blog', description: 'Visualizou blog' });
     }
 
-    // Detect return visit (3+ page views in session = engaged)
     if (pageViewsRef.current === 3) {
-      trackEvent('return_visit', { description: 'Sessão engajada (3+ páginas)', pages: pageViewsRef.current });
+      trackEvent('return_visit', {
+        description: 'Sessão engajada (3+ páginas)',
+        pages: pageViewsRef.current,
+      });
     }
   }, [location.pathname, trackEvent]);
 
-  // Detect page unload while form is active
   useEffect(() => {
     if (!activeFormId) return;
+
     const handler = () => {
-      if (leadIdRef.current) {
-        // Use sendBeacon for reliability on unload
-        const payload = JSON.stringify({
-          lead_id: leadIdRef.current,
-          event_type: 'abandon_quote',
-          channel: 'web',
-          description: `Abandonou formulário ao sair: ${activeFormId}`,
-          metadata: { form_id: activeFormId, session_id: sessionId.current },
-        });
-        // Best-effort beacon with auth headers
-        const headers = {
-          'Content-Type': 'application/json',
-          'apikey': import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || '',
-        };
-        const blob = new Blob([JSON.stringify({
-          ...JSON.parse(payload),
-        })], { type: 'application/json' });
-        // sendBeacon cannot set custom headers, use fetch keepalive instead
-        fetch(`${import.meta.env.VITE_SUPABASE_URL}/rest/v1/lead_events`, {
-          method: 'POST',
-          headers,
-          body: blob,
-          keepalive: true,
-        }).catch(() => {});
-      }
+      const payload = buildPayload('abandon_quote', {
+        form_id: activeFormId,
+        description: `Abandonou formulário ao sair: ${activeFormId}`,
+      });
+
+      const endpoint = getFunctionEndpoint();
+      if (!payload || !endpoint) return;
+
+      fetch(endpoint, {
+        method: 'POST',
+        headers: getFunctionHeaders(),
+        body: JSON.stringify(payload),
+        keepalive: true,
+      }).catch(() => undefined);
     };
+
     window.addEventListener('beforeunload', handler);
     return () => window.removeEventListener('beforeunload', handler);
-  }, [activeFormId]);
+  }, [activeFormId, buildPayload]);
 
   return (
-    <LeadTrackingContext.Provider value={{ utmData, trackEvent, trackFormStart, trackFormAbandon, setLeadId }}>
+    <LeadTrackingContext.Provider
+      value={{ utmData, trackEvent, trackFormStart, trackFormAbandon, setLeadId }}
+    >
       {children}
     </LeadTrackingContext.Provider>
   );

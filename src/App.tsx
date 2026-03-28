@@ -22,6 +22,8 @@ const QuotePage = lazy(() => import("./pages/QuotePage"));
 const PlanTripPage = lazy(() => import("./pages/PlanTripPage"));
 const BlogPage = lazy(() => import("./pages/BlogPage"));
 const BlogPostPage = lazy(() => import("./pages/BlogPostPage"));
+const GuidesHubPage = lazy(() => import("./pages/GuidesHubPage"));
+const SeoGuidePage = lazy(() => import("./pages/SeoGuidePage"));
 const ComparePage = lazy(() => import("./pages/ComparePage"));
 const AuthPage = lazy(() => import("./pages/AuthPage"));
 const ForgotPasswordPage = lazy(() => import("./pages/ForgotPasswordPage"));
@@ -56,6 +58,8 @@ const App = () => (
                       <Route path="/planejar" element={<PlanTripPage />} />
                       <Route path="/blog" element={<BlogPage />} />
                       <Route path="/blog/:slug" element={<BlogPostPage />} />
+                      <Route path="/guias" element={<GuidesHubPage />} />
+                      <Route path="/guias/:slug" element={<SeoGuidePage />} />
                       <Route path="/comparar/:slugs" element={<ComparePage />} />
                       <Route path="/booking/success" element={<BookingSuccess />} />
                       <Route path="/booking/cancel" element={<BookingCancel />} />

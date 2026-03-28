@@ -79,12 +79,26 @@ const QuotePage = () => {
 
       if (error) throw error;
 
-      await supabase.from('lead_events').insert({
-        lead_id: leadId,
-        event_type: 'quote_requested',
-        channel: 'web',
-        description: `Cotação solicitada: ${data.service_type || 'geral'} para ${data.destination_slug || 'destino não especificado'}`,
+      const { error: trackingError } = await supabase.functions.invoke('track-lead-event', {
+        body: {
+          lead_id: leadId,
+          event_type: 'quote_requested',
+          channel: 'web',
+          description: `Cotação solicitada: ${data.service_type || 'geral'} para ${data.destination_slug || 'destino não especificado'}`,
+          metadata: {
+            source: 'quote_form',
+            landing_page: '/cotacao',
+            destination_slug: data.destination_slug || null,
+            service_type: data.service_type || null,
+            travelers_count: data.travelers_count,
+            budget_range: data.budget_range || null,
+          },
+        },
       });
+
+      if (trackingError) {
+        throw trackingError;
+      }
 
       setSubmitted(true);
       toast.success('Cotação solicitada com sucesso!');

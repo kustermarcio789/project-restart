@@ -30,9 +30,10 @@ ALTER TABLE public.admin_sessions ENABLE ROW LEVEL SECURITY;
 
 -- No direct access policies - only accessible via SECURITY DEFINER functions
 
--- Insert default admin user (password: admin123 - should be changed after first login)
-INSERT INTO public.admins (username, password_hash, display_name)
-VALUES ('admin@decolando.com', crypt('admin123', gen_salt('bf')), 'Administrador');
+-- Security note:
+-- Do NOT seed a default administrative credential in versioned migrations.
+-- The initial administrator must be provisioned manually in a secure environment,
+-- or through a one-time protected bootstrap routine outside source control.
 
 -- Create login function
 CREATE OR REPLACE FUNCTION public.admin_login(

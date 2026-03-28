@@ -52,8 +52,10 @@ serve(async (req) => {
       );
     }
 
+    const AMADEUS_BASE_URL = Deno.env.get('AMADEUS_BASE_URL') || 'https://test.api.amadeus.com';
+
     // Amadeus OAuth token
-    const tokenRes = await fetch('https://api.amadeus.com/v1/security/oauth2/token', {
+    const tokenRes = await fetch(`${AMADEUS_BASE_URL}/v1/security/oauth2/token`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: `grant_type=client_credentials&client_id=${AMADEUS_KEY}&client_secret=${AMADEUS_SECRET}`,
@@ -77,17 +79,75 @@ serve(async (req) => {
         max: '10',
       });
       if (params.returnDate) searchParams.set('returnDate', params.returnDate);
-      apiUrl = `https://api.amadeus.com/v2/shopping/flight-offers?${searchParams}`;
-    } else {
-      const searchParams = new URLSearchParams({
-        cityCode: params.destination,
-        checkInDate: params.departDate,
-        adults: String(params.adults || 1),
-        currency: params.currency || 'BRL',
+      apiUrl = `${AMADEUS_BASE_URL}/v2/shopping/flight-offers?${searchParams}`;
+
+      const apiRes = await fetch(apiUrl, {
+        headers: { Authorization: `Bearer ${token}` },
       });
-      if (params.returnDate) searchParams.set('checkOutDate', params.returnDate);
-      apiUrl = `https://api.amadeus.com/v3/shopping/hotel-offers?${searchParams}`;
+
+      const apiData = await apiRes.json();
+
+      if (!apiRes.ok) {
+        return new Response(
+          JSON.stringify({ error: 'API error', details: apiData }),
+          { status: apiRes.status, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      return new Response(
+        JSON.stringify({ source: 'amadeus', data: apiData.data || [] }),
+        { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
     }
+
+    const hotelListParams = new URLSearchParams({
+      cityCode: params.destination,
+      radius: '20',
+      radiusUnit: 'KM',
+      hotelSource: 'ALL',
+    });
+
+    const hotelListRes = await fetch(
+      `${AMADEUS_BASE_URL}/v1/reference-data/locations/hotels/by-city?${hotelListParams}`,
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+
+    const hotelListData = await hotelListRes.json();
+
+    if (!hotelListRes.ok) {
+      return new Response(
+        JSON.stringify({ error: 'Hotel list API error', details: hotelListData }),
+        { status: hotelListRes.status, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    const hotelIds = Array.from(
+      new Set(
+        (hotelListData.data || [])
+          .map((hotel: { hotelId?: string }) => hotel.hotelId)
+          .filter(Boolean)
+      )
+    ).slice(0, 12) as string[];
+
+    if (!hotelIds.length) {
+      return new Response(
+        JSON.stringify({ source: 'amadeus', data: [], meta: { cityCode: params.destination, hotelsFound: 0 } }),
+        { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    const hotelOffersParams = new URLSearchParams({
+      hotelIds: hotelIds.join(','),
+      checkInDate: params.departDate,
+      adults: String(params.adults || 1),
+      roomQuantity: '1',
+      bestRateOnly: 'true',
+      currency: params.currency || 'BRL',
+    });
+
+    if (params.returnDate) hotelOffersParams.set('checkOutDate', params.returnDate);
+
+    apiUrl = `${AMADEUS_BASE_URL}/v3/shopping/hotel-offers?${hotelOffersParams}`;
 
     const apiRes = await fetch(apiUrl, {
       headers: { Authorization: `Bearer ${token}` },
@@ -97,13 +157,17 @@ serve(async (req) => {
 
     if (!apiRes.ok) {
       return new Response(
-        JSON.stringify({ error: 'API error', details: apiData }),
+        JSON.stringify({ error: 'Hotel offers API error', details: apiData, meta: { hotelIds } }),
         { status: apiRes.status, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
     return new Response(
-      JSON.stringify({ source: 'amadeus', data: apiData.data || [] }),
+      JSON.stringify({
+        source: 'amadeus',
+        data: apiData.data || [],
+        meta: { cityCode: params.destination, hotelsFound: hotelIds.length },
+      }),
       { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   } catch (error) {

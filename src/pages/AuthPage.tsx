@@ -1,16 +1,16 @@
-import { useState } from 'react';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Link, Navigate, useNavigate, useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { Plane, Mail, Lock, User, ArrowLeft } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Plane, Mail, Lock, User, ArrowLeft, CheckCircle2 } from 'lucide-react';
 
 const AuthPage = () => {
   const { user, loading, signIn, signUp } = useAuth();
+  const [searchParams] = useSearchParams();
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -19,6 +19,26 @@ const AuthPage = () => {
   const [emailSent, setEmailSent] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
+
+  const plannerMode = searchParams.get('planner') === '1';
+  const requestedMode = searchParams.get('mode');
+
+  useEffect(() => {
+    if (requestedMode === 'signup') {
+      setIsLogin(false);
+    }
+
+    const emailFromQuery = searchParams.get('email');
+    const nameFromQuery = searchParams.get('name');
+
+    if (emailFromQuery) {
+      setEmail(emailFromQuery);
+    }
+
+    if (nameFromQuery) {
+      setFullName(nameFromQuery);
+    }
+  }, [requestedMode, searchParams]);
 
   if (loading) {
     return (
@@ -42,8 +62,8 @@ const AuthPage = () => {
           description: error.message.includes('Invalid login')
             ? 'E-mail ou senha incorretos.'
             : error.message.includes('Email not confirmed')
-            ? 'Confirme seu e-mail antes de fazer login.'
-            : error.message,
+              ? 'Confirme seu e-mail antes de fazer login.'
+              : error.message,
           variant: 'destructive',
         });
       } else {
@@ -61,6 +81,7 @@ const AuthPage = () => {
         setEmailSent(true);
       }
     }
+
     setSubmitting(false);
   };
 
@@ -77,8 +98,7 @@ const AuthPage = () => {
           </div>
           <h1 className="text-2xl font-bold text-foreground mb-2">Verifique seu e-mail</h1>
           <p className="text-muted-foreground mb-6">
-            Enviamos um link de confirmação para <strong>{email}</strong>. 
-            Clique no link para ativar sua conta.
+            Enviamos um link de confirmação para <strong>{email}</strong>. Clique no link para ativar sua conta.
           </p>
           <Button variant="outline" onClick={() => { setEmailSent(false); setIsLogin(true); }}>
             Voltar para login
@@ -110,10 +130,28 @@ const AuthPage = () => {
                 {isLogin ? 'Entrar na conta' : 'Criar conta'}
               </h1>
               <p className="text-sm text-muted-foreground">
-                {isLogin ? 'Acesse sua área do viajante' : 'Comece sua jornada conosco'}
+                {plannerMode
+                  ? 'Seu planejamento foi salvo. Agora crie sua conta para continuar.'
+                  : isLogin
+                    ? 'Acesse sua área do viajante'
+                    : 'Comece sua jornada conosco'}
               </p>
             </div>
           </div>
+
+          {plannerMode && !isLogin && (
+            <div className="mb-6 rounded-xl border border-primary/20 bg-primary/5 p-4">
+              <div className="flex items-start gap-3">
+                <CheckCircle2 className="h-5 w-5 text-primary mt-0.5" />
+                <div>
+                  <p className="text-sm font-semibold text-foreground">Planejamento concluído</p>
+                  <p className="text-sm text-muted-foreground">
+                    Seu fluxo de viagem já foi registrado. Finalize o cadastro para acompanhar propostas, documentos e próximos passos.
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
             {!isLogin && (

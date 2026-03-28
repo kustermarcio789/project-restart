@@ -7,7 +7,6 @@ import { DestinationsSection } from '@/components/landing/DestinationsSection';
 import { TestimonialsSection } from '@/components/landing/TestimonialsSection';
 import { CTASection } from '@/components/landing/CTASection';
 import { Footer } from '@/components/landing/Footer';
-import { TravelerFlow } from '@/components/TravelerFlow';
 import { RegistrationForm } from '@/components/RegistrationForm';
 import { StickyWhatsApp } from '@/components/shared/StickyWhatsApp';
 import { SEOHead } from '@/components/shared/SEOHead';
@@ -16,11 +15,14 @@ import { RecommendationBlock } from '@/components/recommendations/Recommendation
 import { TrustBar } from '@/components/landing/TrustBar';
 import { Button } from '@/components/ui/button';
 import { UserPlus, Handshake } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const Index = () => {
-  const [flowOpen, setFlowOpen] = useState(false);
+  const navigate = useNavigate();
   const [providerOpen, setProviderOpen] = useState(false);
   const [partnerOpen, setPartnerOpen] = useState(false);
+
+  const openPlanner = () => navigate('/planejar');
 
   return (
     <div className="min-h-screen bg-background">
@@ -30,7 +32,7 @@ const Index = () => {
       />
       <JsonLd data={buildOrganizationSchema()} />
       <Header />
-      <HeroSection onStartFlow={() => setFlowOpen(true)} />
+      <HeroSection onStartFlow={openPlanner} />
       <TrustBar />
       <ServicesSection />
       <HowItWorks />
@@ -41,7 +43,7 @@ const Index = () => {
         type="popular"
       />
       <TestimonialsSection />
-      <CTASection onStartFlow={() => setFlowOpen(true)} />
+      <CTASection onStartFlow={openPlanner} />
 
       {/* Registration Buttons */}
       <section className="py-16 sm:py-20 bg-muted/30">
@@ -78,7 +80,6 @@ const Index = () => {
       <StickyWhatsApp />
 
       {/* Modals */}
-      <TravelerFlow open={flowOpen} onOpenChange={setFlowOpen} />
       <RegistrationForm open={providerOpen} onOpenChange={setProviderOpen} type="provider" />
       <RegistrationForm open={partnerOpen} onOpenChange={setPartnerOpen} type="partner" />
     </div>
