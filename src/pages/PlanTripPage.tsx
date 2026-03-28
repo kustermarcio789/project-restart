@@ -41,6 +41,49 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { getPassportOffice } from '@/lib/passportOffices';
 
+function getTravelSearchEndpoint() {
+  const url = import.meta.env.VITE_SUPABASE_URL;
+  if (!url) return null;
+  return `${url}/functions/v1/travel-search`;
+}
+
+function getTravelSearchHeaders() {
+  const publishableKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || '';
+
+  return {
+    'Content-Type': 'application/json',
+    apikey: publishableKey,
+    Authorization: `Bearer ${publishableKey}`,
+  };
+}
+
+async function invokeTravelSearch(body: Record<string, unknown>) {
+  const endpoint = getTravelSearchEndpoint();
+
+  if (!endpoint) {
+    throw new Error('Supabase URL não configurada para a função travel-search.');
+  }
+
+  const response = await fetch(endpoint, {
+    method: 'POST',
+    headers: getTravelSearchHeaders(),
+    body: JSON.stringify(body),
+  });
+
+  const result = await response.json().catch(() => ({}));
+
+  if (!response.ok) {
+    throw new Error(
+      typeof result?.error === 'string'
+        ? result.error
+        : `Falha ao consultar a função travel-search (${response.status}).`
+    );
+  }
+
+  return result;
+}
+
+
 const STEPS = [
   { id: 0, label: 'Nacionalidade', icon: Globe },
   { id: 1, label: 'Passaporte', icon: FileCheck },
@@ -622,19 +665,15 @@ const PlanTripPage = () => {
 
     try {
       setSearchingFlights(true);
-      const { data, error } = await supabase.functions.invoke('travel-search', {
-        body: {
-          type: 'flights',
-          origin: originIata,
-          destination: destinationIata,
-          departDate: state.departDate,
-          returnDate: state.returnDate || undefined,
-          adults: state.travelers,
-          currency: 'BRL',
-        },
+      const data = await invokeTravelSearch({
+        type: 'flights',
+        origin: originIata,
+        destination: destinationIata,
+        departDate: state.departDate,
+        returnDate: state.returnDate || undefined,
+        adults: state.travelers,
+        currency: 'BRL',
       });
-
-      if (error) throw error;
 
       const source = data?.source === 'amadeus' ? 'amadeus' : 'mock';
       const normalized = Array.isArray(data?.data)
@@ -687,18 +726,14 @@ const PlanTripPage = () => {
 
     try {
       setSearchingHotels(true);
-      const { data, error } = await supabase.functions.invoke('travel-search', {
-        body: {
-          type: 'hotels',
-          destination: destinationIata,
-          departDate: state.departDate,
-          returnDate: state.returnDate || undefined,
-          adults: state.travelers,
-          currency: 'BRL',
-        },
+      const data = await invokeTravelSearch({
+        type: 'hotels',
+        destination: destinationIata,
+        departDate: state.departDate,
+        returnDate: state.returnDate || undefined,
+        adults: state.travelers,
+        currency: 'BRL',
       });
-
-      if (error) throw error;
 
       const source = data?.source === 'amadeus' ? 'amadeus' : 'mock';
       const normalized = Array.isArray(data?.data)
