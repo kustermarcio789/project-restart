@@ -35,6 +35,7 @@ import { Progress } from '@/components/ui/progress';
 import { Header } from '@/components/landing/Header';
 import { Footer } from '@/components/landing/Footer';
 import { SEOHead } from '@/components/shared/SEOHead';
+import { StickyCTA } from '@/components/shared/StickyCTA';
 import { StickyWhatsApp } from '@/components/shared/StickyWhatsApp';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
@@ -614,6 +615,52 @@ const PlanTripPage = () => {
 
   const topFlight = flightResults[0];
   const topHotel = hotelResults[0];
+  const nextStepLabel = STEPS[Math.min(step + 1, STEPS.length - 1)]?.label || 'Concluir';
+  const assistantGuidance = [
+    'Comece definindo sua nacionalidade para personalizar documentos, origem e próximos passos.',
+    'Valide o passaporte para reduzir atrito nas etapas de destino, visto e emissão.',
+    'Escolha origem, destino e datas para destravar comparação real de rota, preço e risco.',
+    'Confirme o objetivo da viagem para ajustar prioridade documental e elegibilidade de visto.',
+    'Compare o transporte com foco em conforto, prazo e preço antes de avançar.',
+    'Selecione a hospedagem ideal para habilitar uma comparação mais premium de custo e conforto.',
+    'Defina a locomoção local para fechar uma jornada mais completa porta a porta.',
+    'Escolha o seguro para elevar proteção, percepção de confiança e aderência documental.',
+    'Adicione experiências para transformar o plano em jornada guiada, não apenas formulário.',
+    'Revise tudo antes do cadastro para seguir com mais confiança e menos abandono.',
+    'Finalize o cadastro para salvar seu plano e continuar a jornada de compra com segurança.',
+  ][step] || 'Siga o fluxo para concluir seu planejamento.';
+  const documentPriority = riskBlocked
+    ? {
+        tone: 'destructive',
+        title: 'Destino com alerta de risco elevado',
+        body: 'Esta rota está bloqueada no momento por prioridade de segurança operacional.',
+      }
+    : visaAssessment?.status === 'blocked'
+      ? {
+          tone: 'destructive',
+          title: 'Documentação bloqueia esta rota',
+          body: visaAssessment.summary,
+        }
+      : visaAssessment?.status === 'attention'
+        ? {
+            tone: 'warning',
+            title: 'Documentação exige atenção antes da emissão',
+            body: visaAssessment.summary,
+          }
+        : selectedDestination
+          ? {
+              tone: 'ok',
+              title: 'Rota pronta para análise comercial',
+              body: 'Siga com transporte, hospedagem e proteção para fechar um plano mais completo.',
+            }
+          : null;
+  const completionSignals = [
+    selectedNationality ? `Nacionalidade: ${selectedNationality.demonym}` : null,
+    selectedDestination ? `Destino: ${selectedDestination.name}` : null,
+    visaAssessment?.visaType ? `Visto: ${visaAssessment.visaType}` : null,
+    topFlight ? `Melhor voo: ${formatCurrency(topFlight.price, topFlight.currency)}` : null,
+    topHotel ? `Melhor hospedagem: ${formatCurrency(topHotel.price, topHotel.currency)}` : null,
+  ].filter(Boolean) as string[];
 
   const canProceed = (): boolean => {
     switch (step) {
@@ -916,16 +963,51 @@ const PlanTripPage = () => {
     </div>
   );
 
-  const OfferCard = ({ title, subtitle, price, badge, footer }: { title: string; subtitle: string; price: string; badge: string; footer: string }) => (
-    <div className="rounded-2xl border border-border bg-card p-4 space-y-3 shadow-sm">
-      <div className="flex items-start justify-between gap-3">
-        <div>
-          <p className="font-semibold text-foreground text-sm">{title}</p>
+  const OfferCard = ({
+    title,
+    subtitle,
+    price,
+    badge,
+    footer,
+    emphasis,
+    meta,
+  }: {
+    title: string;
+    subtitle: string;
+    price: string;
+    badge: string;
+    footer: string;
+    emphasis?: string;
+    meta?: string[];
+  }) => (
+    <div className="rounded-3xl border border-border bg-card p-4 space-y-4 shadow-sm">
+      <div className="flex items-start justify-between gap-4">
+        <div className="space-y-1">
+          <span className="inline-flex rounded-full bg-primary/10 px-2.5 py-1 text-[11px] font-semibold text-primary">
+            {badge}
+          </span>
+          <p className="font-semibold text-foreground text-sm sm:text-base">{title}</p>
           <p className="text-xs text-muted-foreground">{subtitle}</p>
         </div>
-        <span className="text-[11px] px-2 py-1 rounded-full bg-primary/10 text-primary font-semibold">{badge}</span>
+        <div className="rounded-2xl bg-primary px-3 py-2 text-right text-primary-foreground min-w-[118px]">
+          <p className="text-[10px] uppercase tracking-[0.16em] opacity-80">Preço</p>
+          <p className="text-lg font-bold leading-tight">{price}</p>
+        </div>
       </div>
-      <div className="text-2xl font-bold text-foreground">{price}</div>
+      {emphasis && (
+        <div className="rounded-2xl border border-primary/20 bg-primary/5 px-3 py-2 text-xs font-medium text-primary">
+          {emphasis}
+        </div>
+      )}
+      {meta && meta.length > 0 && (
+        <div className="flex flex-wrap gap-2">
+          {meta.map(item => (
+            <span key={item} className="rounded-full border border-border px-2.5 py-1 text-[11px] text-muted-foreground">
+              {item}
+            </span>
+          ))}
+        </div>
+      )}
       <p className="text-xs text-muted-foreground">{footer}</p>
     </div>
   );
@@ -1023,6 +1105,32 @@ const PlanTripPage = () => {
                   </button>
                 );
               })}
+            </div>
+
+            <div className="mb-6 rounded-2xl border border-primary/20 bg-primary/5 p-4">
+              <div className="flex items-start gap-3">
+                <div className="rounded-2xl bg-primary/10 p-2">
+                  <Sparkles className="h-4 w-4 text-primary" />
+                </div>
+                <div className="flex-1 space-y-3">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <p className="text-sm font-semibold text-foreground">Assistente de jornada</p>
+                    <span className="rounded-full border border-primary/20 bg-background/80 px-2.5 py-1 text-[11px] font-medium text-primary">
+                      Próximo marco: {nextStepLabel}
+                    </span>
+                  </div>
+                  <p className="text-sm text-muted-foreground">{assistantGuidance}</p>
+                  {completionSignals.length > 0 && (
+                    <div className="flex flex-wrap gap-2">
+                      {completionSignals.map(item => (
+                        <span key={item} className="rounded-full border border-border bg-background/80 px-2.5 py-1 text-[11px] text-foreground">
+                          {item}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
 
             <AnimatePresence mode="wait">
@@ -1377,8 +1485,13 @@ const PlanTripPage = () => {
                                   title={item.airline}
                                   subtitle={`${item.stops} parada(s) • ${item.duration}`}
                                   price={formatCurrency(item.price, item.currency)}
-                                  badge={item.stops === 0 ? 'Melhor conforto' : 'Mais opções'}
-                                  footer={`Saída: ${String(item.departure).slice(0, 10)}`}
+                                  badge={item.stops === 0 ? 'Seleção premium' : 'Comparação ativa'}
+                                  emphasis={`Preço para ${state.travelers} viajante(s) com foco em conversão rápida`}
+                                  meta={[
+                                    item.stops === 0 ? 'Voo direto' : `${item.stops} conexão(ões)`,
+                                    `Saída ${String(item.departure).slice(0, 10)}`,
+                                  ]}
+                                  footer="Use este comparativo para destacar preço, conforto e prontidão de emissão."
                                 />
                               ))}
                             </div>
@@ -1454,8 +1567,13 @@ const PlanTripPage = () => {
                                   title={item.name}
                                   subtitle={`${item.stars} estrela(s) • ${item.location}`}
                                   price={formatCurrency(item.price, item.currency)}
-                                  badge="Melhor custo"
-                                  footer="Preço estimado por diária ou oferta disponível"
+                                  badge="Oferta recomendada"
+                                  emphasis="Compare conforto, localização e custo antes do checkout final"
+                                  meta={[
+                                    `${item.stars} estrela(s)`,
+                                    item.location,
+                                  ]}
+                                  footer="Preço estimado por diária ou oferta disponível para decisão comercial mais rápida."
                                 />
                               ))}
                             </div>
@@ -1544,8 +1662,35 @@ const PlanTripPage = () => {
                   )}
 
                   {step === 9 && (
-                    <div>
-                      <h2 className="text-xl font-semibold text-foreground mb-4">Revise seu plano antes de continuar</h2>
+                    <div className="space-y-5">
+                      <div>
+                        <h2 className="text-xl font-semibold text-foreground mb-1">Revise seu plano antes de continuar</h2>
+                        <p className="text-sm text-muted-foreground">
+                          Esta etapa fecha o funil antes do cadastro: documentação, deslocamento, hospedagem, proteção e experiência geral.
+                        </p>
+                      </div>
+
+                      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                        <OfferCard
+                          title={topFlight ? topFlight.airline : 'Oferta de voo pendente'}
+                          subtitle={topFlight ? `${topFlight.stops} parada(s) • ${topFlight.duration}` : 'Atualize a etapa de transporte para comparar opções'}
+                          price={topFlight ? formatCurrency(topFlight.price, topFlight.currency) : 'A confirmar'}
+                          badge="Comparação de voo"
+                          emphasis={topFlight ? 'Melhor equilíbrio atual entre preço e prontidão de emissão' : 'Ainda não há voo destacado no plano'}
+                          meta={topFlight ? [selectedOrigin?.name || 'Origem', selectedDestination?.name || 'Destino'] : []}
+                          footer="Use este bloco como referência principal para defender a escolha do transporte."
+                        />
+                        <OfferCard
+                          title={topHotel ? topHotel.name : 'Hospedagem pendente'}
+                          subtitle={topHotel ? `${topHotel.stars} estrela(s) • ${topHotel.location}` : 'Selecione hospedagem para comparar conforto e custo'}
+                          price={topHotel ? formatCurrency(topHotel.price, topHotel.currency) : 'A confirmar'}
+                          badge="Comparação de hospedagem"
+                          emphasis={topHotel ? 'Oferta com maior clareza comercial dentro do fluxo' : 'Ainda não há hospedagem destacada no plano'}
+                          meta={topHotel ? [`${topHotel.stars} estrela(s)`, topHotel.location] : []}
+                          footer="Concentre aqui a decisão entre conforto, localização e valor percebido."
+                        />
+                      </div>
+
                       <div className="space-y-3">
                         <SummaryRow label="Nacionalidade" value={selectedNationality ? `${selectedNationality.flag} ${selectedNationality.demonym}` : '-'} />
                         <SummaryRow label="Origem" value={selectedOrigin ? `${selectedOrigin.flag} ${selectedOrigin.name}` : '-'} />
@@ -1554,9 +1699,7 @@ const PlanTripPage = () => {
                         <SummaryRow label="Objetivo" value={TRAVEL_PURPOSES.find(item => item.value === state.purpose)?.label} />
                         <SummaryRow label="Tipo de visto / validação" value={visaAssessment?.visaType} />
                         <SummaryRow label="Transporte" value={TRANSPORT_OPTIONS.find(item => item.value === state.transport)?.label} />
-                        <SummaryRow label="Melhor oferta de voo" value={topFlight ? `${topFlight.airline} • ${formatCurrency(topFlight.price, topFlight.currency)}` : 'Ainda não carregada'} />
                         <SummaryRow label="Hospedagem" value={ACCOMMODATION_OPTIONS.find(item => item.value === state.accommodation)?.label} />
-                        <SummaryRow label="Melhor hospedagem sugerida" value={topHotel ? `${topHotel.name} • ${formatCurrency(topHotel.price, topHotel.currency)}` : 'Ainda não carregada'} />
                         <SummaryRow label="Locomoção local" value={state.localTransport.map(item => LOCAL_TRANSPORT.find(option => option.value === item)?.label).filter(Boolean).join(', ')} />
                         <SummaryRow label="Seguro" value={INSURANCE_OPTIONS.find(item => item.value === state.insurance)?.label} />
                         <SummaryRow label="Experiências" value={state.experiences.map(item => EXPERIENCE_OPTIONS.find(option => option.value === item)?.label).filter(Boolean).join(', ') || 'Nenhuma'} />
@@ -1565,11 +1708,26 @@ const PlanTripPage = () => {
                       </div>
 
                       {visaAssessment && (
-                        <div className={`mt-4 p-4 rounded-xl border ${visaAssessment.status === 'blocked' ? 'border-destructive/30 bg-destructive/10' : 'border-primary/20 bg-primary/5'}`}>
-                          <p className="text-sm text-foreground font-semibold mb-1">Resumo documental</p>
+                        <div className={`rounded-2xl border p-4 ${visaAssessment.status === 'blocked' ? 'border-destructive/30 bg-destructive/10' : visaAssessment.status === 'attention' ? 'border-amber-500/30 bg-amber-500/10' : 'border-emerald-500/30 bg-emerald-500/10'}`}>
+                          <div className="flex items-center gap-2 mb-2">
+                            <AlertTriangle className={`h-4 w-4 ${visaAssessment.status === 'blocked' ? 'text-destructive' : visaAssessment.status === 'attention' ? 'text-amber-600' : 'text-emerald-600'}`} />
+                            <p className="text-sm font-semibold text-foreground">Resumo documental prioritário</p>
+                          </div>
                           <p className="text-sm text-muted-foreground">{visaAssessment.summary}</p>
                         </div>
                       )}
+
+                      <div className="rounded-2xl border border-primary/20 bg-primary/5 p-4">
+                        <p className="text-sm font-semibold text-foreground mb-2">Pronto para avançar ao cadastro e checkout guiado</p>
+                        <p className="text-sm text-muted-foreground mb-3">
+                          Na próxima etapa, você salva o plano, cria sua conta e mantém todo o contexto da viagem para continuar com atendimento, emissão e próximos produtos.
+                        </p>
+                        <div className="flex flex-wrap gap-2">
+                          <span className="rounded-full border border-border bg-background/80 px-2.5 py-1 text-[11px] text-foreground">Cadastro em poucos segundos</span>
+                          <span className="rounded-full border border-border bg-background/80 px-2.5 py-1 text-[11px] text-foreground">Plano salvo com contexto completo</span>
+                          <span className="rounded-full border border-border bg-background/80 px-2.5 py-1 text-[11px] text-foreground">Próxima fase pronta para checkout</span>
+                        </div>
+                      </div>
                     </div>
                   )}
 
@@ -1647,9 +1805,14 @@ const PlanTripPage = () => {
 
           <aside className="xl:sticky xl:top-28 space-y-4">
             <div className="rounded-3xl border border-border bg-card p-5 shadow-sm">
-              <div className="flex items-center gap-2 mb-3">
-                <Lock className="h-4 w-4 text-primary" />
-                <p className="font-semibold text-foreground">Resumo inteligente da viagem</p>
+              <div className="flex items-center justify-between gap-3 mb-3">
+                <div className="flex items-center gap-2">
+                  <Lock className="h-4 w-4 text-primary" />
+                  <p className="font-semibold text-foreground">Resumo inteligente da viagem</p>
+                </div>
+                <span className="rounded-full bg-primary/10 px-2.5 py-1 text-[11px] font-semibold text-primary">
+                  Etapa atual: {STEPS[step].label}
+                </span>
               </div>
               <div className="space-y-3">
                 <SummaryRow label="Destino" value={selectedDestination ? `${selectedDestination.flag} ${selectedDestination.name}` : 'Escolha um destino'} />
@@ -1659,13 +1822,55 @@ const PlanTripPage = () => {
                 <SummaryRow label="Melhor voo" value={topFlight ? formatCurrency(topFlight.price, topFlight.currency) : 'Sem oferta ainda'} />
                 <SummaryRow label="Melhor hospedagem" value={topHotel ? formatCurrency(topHotel.price, topHotel.currency) : 'Sem oferta ainda'} />
               </div>
+              <div className="mt-4 rounded-2xl border border-primary/20 bg-primary/5 p-4">
+                <p className="text-sm font-semibold text-foreground mb-1">Próximo marco do funil</p>
+                <p className="text-sm text-muted-foreground">{assistantGuidance}</p>
+              </div>
             </div>
 
+            {documentPriority && (
+              <div className={`rounded-3xl border p-5 ${documentPriority.tone === 'destructive' ? 'border-destructive/30 bg-destructive/10' : documentPriority.tone === 'warning' ? 'border-amber-500/30 bg-amber-500/10' : 'border-emerald-500/30 bg-emerald-500/10'}`}>
+                <div className="flex items-center gap-2 mb-2">
+                  <AlertTriangle className={`h-4 w-4 ${documentPriority.tone === 'destructive' ? 'text-destructive' : documentPriority.tone === 'warning' ? 'text-amber-600' : 'text-emerald-600'}`} />
+                  <p className="font-semibold text-foreground">{documentPriority.title}</p>
+                </div>
+                <p className="text-sm text-muted-foreground">{documentPriority.body}</p>
+              </div>
+            )}
+
+            <div className="rounded-3xl border border-border bg-card p-5 shadow-sm">
+              <div className="flex items-center gap-2 mb-3">
+                <BadgeCheck className="h-4 w-4 text-primary" />
+                <p className="font-semibold text-foreground">Selos de confiança</p>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                {[
+                  'Compra protegida',
+                  'Operação com foco documental',
+                  'Atendimento consultivo',
+                  'Fluxo salvo para checkout',
+                ].map(item => (
+                  <div key={item} className="rounded-2xl border border-border bg-muted/20 px-3 py-3 text-xs font-medium text-foreground">
+                    {item}
+                  </div>
+                ))}
+              </div>
+            </div>
           </aside>
         </div>
       </div>
 
       <Footer />
+      <StickyCTA
+        text={step === STEPS.length - 1 ? 'Concluir e criar conta' : `Continuar para ${nextStepLabel}`}
+        onClick={() => {
+          if (step === STEPS.length - 1) {
+            if (canProceed() && !submitting) void handleSubmit();
+            return;
+          }
+          if (canProceed()) goNext();
+        }}
+      />
       <StickyWhatsApp message="Olá! Preciso de ajuda para planejar minha viagem." />
     </div>
   );
