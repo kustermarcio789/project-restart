@@ -205,10 +205,17 @@ const AuthPage = () => {
                   onChange={(e) => setPassword(e.target.value)}
                   required
                   minLength={8}
+                  pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}"
+                  title="Use pelo menos 8 caracteres com letra maiúscula, letra minúscula e número."
                   className="pl-10 bg-muted/50 border-border"
                   placeholder="••••••••"
                 />
               </div>
+              {!isLogin && (
+                <p className="mt-2 text-xs text-muted-foreground">
+                  Use pelo menos 8 caracteres com <strong>letra maiúscula</strong>, <strong>letra minúscula</strong> e <strong>número</strong>.
+                </p>
+              )}
             </div>
 
             <Button type="submit" className="w-full gradient-btn border-0" disabled={submitting}>
