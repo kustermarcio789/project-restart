@@ -479,7 +479,7 @@ const PlanTripPage = () => {
     const loadCountries = async () => {
       try {
         setCountriesLoading(true);
-        const response = await fetch('https://restcountries.com/v3.1/all?fields=name,cca2,flag,demonyms,translations,region,subregion,independent');
+        const response = await fetch('/countries.json');
         const data = await response.json();
 
         const normalizedCountries: CountryOption[] = (Array.isArray(data) ? data : [])
